@@ -9,11 +9,11 @@
         .container { max-width: 400px; width: 100%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
         h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
         label { display: block; margin: 15px 0 5px; font-weight: bold; color: #444; }
-        select, input { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; -webkit-appearance: none; }
-        select:focus, input:focus { border-color: #1a73e8; }
+        select, input, textarea { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; -webkit-appearance: none; }
+        select:focus, input:focus, textarea:focus { border-color: #1a73e8; }
+        textarea { height: 80px; resize: none; font-family: inherit; }
         .btn-principal { width: 100%; padding: 18px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.2s; margin-top: 10px; -webkit-tap-highlight-color: transparent; }
         .btn-principal:active { background-color: #0d47a1; transform: scale(0.95); }
-        .error { color: #d93025; font-size: 14px; display: none; text-align: center; margin-bottom: 10px; font-weight: bold; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -25,8 +25,7 @@
     <div id="sec-pass">
         <label>Contraseña de Acceso:</label>
         <input type="text" id="passInput" placeholder="Escribe aquí..." autocomplete="off" style="-webkit-text-security: disc;">
-        <p id="errorPass" class="error">⚠️ Clave incorrecta</p>
-        <button class="btn-principal" onclick="verificarPass()" ontouchstart="">INGRESAR</button>
+        <button class="btn-principal" onclick="verificarPass()">INGRESAR</button>
     </div>
 
     <div id="sec-form" class="hidden">
@@ -72,13 +71,25 @@
         <label>3. Kilometraje Actual:</label>
         <input type="number" id="km" placeholder="Ej: 150000" inputmode="numeric">
 
-        <button id="btnRegistrar" class="btn-principal" onclick="enviarDatos()" ontouchstart="">REGISTRAR DATOS</button>
+        <label>4. Tipo de Mantenimiento:</label>
+        <select id="manto">
+            <option value="N/A">N/A (Solo Kilometraje)</option>
+            <option value="M1">M1</option>
+            <option value="M2">M2</option>
+            <option value="M3">M3</option>
+            <option value="M4">M4</option>
+        </select>
+
+        <label>5. Comentarios / Reporte de Falla:</label>
+        <textarea id="comentarios" placeholder="Escribe aquí si la unidad tiene algún detalle..."></textarea>
+
+        <button id="btnRegistrar" class="btn-principal" onclick="enviarDatos()">REGISTRAR DATOS</button>
     </div>
 </div>
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxRcn_78nFZUTRekxvlWEuwpVPkX6wuHUtEQ9WN_nn9R1VQmECLoSkszAsZ5Ab_4W3r3A/exec";
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbyzMP1S7pHt7iokTLNTn3HcFM0MGREjX4wcKf0ukMwuhtnLnoasnwlugx3rehw8ojQ3aA/exec";
 
     const unidadesData = {
         "ALIANZA REAL": ["6003", "6013", "6015", "6026", "6027", "6028", "6036", "6038", "6039", "6044", "6045", "6047", "6050", "6053", "6059", "6065", "6066", "6075", "6081", "6082", "6092", "6096", "6098", "6099", "6100"],
@@ -142,7 +153,10 @@
         const r = document.getElementById('ruta').value;
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
-        if(!r || !u || !k) return alert("Llena todos los campos");
+        const m = document.getElementById('manto').value;
+        const c = document.getElementById('comentarios').value.trim();
+
+        if(!r || !u || !k) return alert("Por favor, llena Ruta, Unidad y Kilometraje");
 
         const btn = document.getElementById('btnRegistrar');
         btn.disabled = true;
@@ -152,10 +166,11 @@
             await fetch(URL_WEBAPP, {
                 method: "POST",
                 mode: "no-cors",
-                body: JSON.stringify({ ruta: r, unidad: u, km: k })
+                body: JSON.stringify({ ruta: r, unidad: u, km: k, manto: m, comentarios: c })
             });
             alert("✅ GUARDADO EN EXCEL");
             document.getElementById('km').value = "";
+            document.getElementById('comentarios').value = "";
         } catch (e) {
             alert("❌ Error de red");
         } finally {
