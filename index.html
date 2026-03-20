@@ -91,8 +91,8 @@
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    // TU URL ACTUALIZADA QUE DIVIDE POR HOJAS
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxrhcxPMz7DHb_W6FYnd71hV_RjqT1bz2TQvz2Qwv3FLYjE07gg63_GjfqPYBYwplmedQ/exec"; 
+    // TU URL FINAL ACTUALIZADA QUE SEPARA POR RUTAS
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbwYxs8TCkgNKHuSbvaaoNnCoM2iLhB99PE-UgHRzVDtBVbQla1lDq5vAaVY1JQcZFyOEg/exec"; 
 
     const unidadesData = {
         "ALIANZA REAL": ["6003", "6013", "6015", "6026", "6027", "6028", "6036", "6038", "6039", "6044", "6045", "6047", "6050", "6053", "6059", "6065", "6066", "6075", "6081", "6082", "6092", "6096", "6098", "6099", "6100"],
@@ -159,13 +159,13 @@
         const c = document.getElementById('comentarios').value.trim();
         
         if(!r || !u || !k) {
-            return alert("Faltan datos obligatorios (Ruta, Unidad o KM).");
+            return alert("Faltan datos obligatorios.");
         }
 
         const btn = document.getElementById('btnRegistrar');
         const status = document.getElementById('status');
         btn.disabled = true;
-        status.innerText = "Enviando datos...";
+        status.innerText = "Registrando...";
 
         try {
             const payload = {
@@ -178,10 +178,10 @@
                 body: JSON.stringify(payload)
             });
 
-            alert("✅ REGISTRO GUARDADO EN LA HOJA DE " + r);
+            alert("✅ DATOS ENVIADOS A LA HOJA: " + r);
             location.reload();
         } catch (e) {
-            alert("❌ ERROR AL ENVIAR: " + e);
+            alert("❌ ERROR: " + e);
             btn.disabled = false;
             status.innerText = "";
         }
