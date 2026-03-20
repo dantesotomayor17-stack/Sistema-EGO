@@ -6,7 +6,7 @@
     <title>E.G.O - Sistema de Flota</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
-        .container { max-width: 400px; width: 100%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .container { max-width: 450px; width: 100%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
         h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
         label { display: block; margin: 15px 0 5px; font-weight: bold; color: #444; }
         select, input, textarea { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; -webkit-appearance: none; }
@@ -17,6 +17,7 @@
         .btn-principal:active { background-color: #0d47a1; transform: scale(0.95); }
         .btn-principal:disabled { background-color: #ccc; }
         .hidden { display: none !important; }
+        .status-msg { text-align: center; margin-top: 10px; font-weight: bold; color: #1a73e8; }
     </style>
 </head>
 <body>
@@ -67,7 +68,7 @@
 
         <label>2. Seleccione la Unidad:</label>
         <select id="unidad">
-            <option value="">-- Elija ruta --</option>
+            <option value="">-- Elija ruta primero --</option>
         </select>
 
         <label>3. Kilometraje Actual:</label>
@@ -92,16 +93,17 @@
         <input type="file" id="fotoIne" accept="image/*" capture="environment">
 
         <label>8. Comentarios / Reporte:</label>
-        <textarea id="comentarios" placeholder="Escribe aquí si la unidad tiene algún detalle..."></textarea>
+        <textarea id="comentarios" placeholder="Detalles mecánicos o estéticos..."></textarea>
 
         <button id="btnRegistrar" class="btn-principal" onclick="enviarDatos()">REGISTRAR DATOS</button>
+        <div id="status" class="status-msg"></div>
     </div>
 </div>
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    // TU URL ACTUALIZADA AQUÍ:
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbyJuUvHTiRcxl3whps3lzC3m0a4c670UV_Wh-nVY_7Cz2uGLEd-32C2dZERxBN_vG198w/exec"; 
+    // TU URL ACTUALIZADA
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycby3oOXSkPa_3bdablpBCDaH-nFrt8RIGmJVWhmO5eMC_E5fJze88H__gvWmDlWxNJt0_A/exec"; 
 
     const unidadesData = {
         "ALIANZA REAL": ["6003", "6013", "6015", "6026", "6027", "6028", "6036", "6038", "6039", "6044", "6045", "6047", "6050", "6053", "6059", "6065", "6066", "6075", "6081", "6082", "6092", "6096", "6098", "6099", "6100"],
@@ -179,24 +181,24 @@
         const fIne = document.getElementById('fotoIne').files[0];
 
         if(!r || !u || !k || !fUnidad || !fOdo || !fIne) {
-            return alert("Por favor, llena los datos y sube las 3 fotos obligatorias.");
+            return alert("Faltan datos o fotos obligatorias.");
         }
 
         const btn = document.getElementById('btnRegistrar');
+        const status = document.getElementById('status');
         btn.disabled = true;
-        btn.innerText = "PROCESANDO IMÁGENES...";
+        status.innerText = "Procesando imágenes...";
 
         try {
             const imgUnidad = await toBase64(fUnidad);
             const imgOdo = await toBase64(fOdo);
             const imgIne = await toBase64(fIne);
 
-            btn.innerText = "ENVIANDO A EXCEL...";
+            status.innerText = "Enviando a base de datos...";
 
             const payload = {
                 ruta: r, unidad: u, km: k, manto: m, comentarios: c,
-                fotoUnidad: imgUnidad, fotoOdo: imgOdo, fotoIne: imgIne,
-                nameUnidad: fUnidad.name, nameOdo: fOdo.name, nameIne: fIne.name
+                fotoUnidad: imgUnidad, fotoOdo: imgOdo, fotoIne: imgIne
             };
 
             await fetch(URL_WEBAPP, {
@@ -205,12 +207,12 @@
                 body: JSON.stringify(payload)
             });
 
-            alert("✅ GUARDADO CON ÉXITO");
+            alert("✅ REGISTRO GUARDADO");
             location.reload();
         } catch (e) {
-            alert("❌ Error: " + e);
+            alert("❌ ERROR: " + e);
             btn.disabled = false;
-            btn.innerText = "REGISTRAR DATOS";
+            status.innerText = "";
         }
     }
 </script>
