@@ -93,8 +93,8 @@
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    // URL ACTUALIZADA
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxZytkeeOQbsjOWAT4NjGRDGHmsUh9cbK08_G7-1nw3zz3S49v_xqLQRE-Ngvjlw1zweQ/exec";
+    // TU ÚLTIMA URL DE IMPLEMENTACIÓN
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxW1r6bcZSI1fSDtT9GlG64oPLNzWTUUNIQNp4r7SVLNTBmAoQ2Bp0P6-L4EFztsuyEkg/exec";
 
     const unidadesData = {
         "ALIANZA REAL": ["6003", "6013", "6015", "6026", "6027", "6028", "6036", "6038", "6039", "6044", "6045", "6047", "6050", "6053", "6059", "6065", "6066", "6075", "6081", "6082", "6092", "6096", "6098", "6099", "6100"],
@@ -183,10 +183,11 @@
     async function ejecutarEnvio(r, u, k, m, c, img, name, type) {
         const btn = document.getElementById('btnRegistrar');
         try {
-            // USAMOS TEXT/PLAIN PARA EVITAR BLOQUEOS DE CORS EN EL PRE-FLIGHT
+            // NOTA: Con no-cors no podemos leer la respuesta, pero el envío se realiza.
             await fetch(URL_WEBAPP, {
                 method: "POST",
                 mode: "no-cors",
+                cache: 'no-cache',
                 headers: {
                     "Content-Type": "text/plain;charset=utf-8"
                 },
@@ -202,12 +203,12 @@
                 })
             });
             
-            alert("✅ GUARDADO EN EXCEL");
+            alert("✅ DATOS ENVIADOS\nRevisa el Excel en unos segundos.");
             document.getElementById('km').value = "";
             document.getElementById('comentarios').value = "";
             document.getElementById('foto').value = "";
         } catch (e) {
-            alert("❌ Error de red");
+            alert("❌ Error de red al enviar.");
             console.error(e);
         } finally {
             btn.disabled = false;
