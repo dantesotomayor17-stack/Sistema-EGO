@@ -15,7 +15,6 @@
         .btn-principal { width: 100%; padding: 18px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.2s; margin-top: 10px; -webkit-tap-highlight-color: transparent; }
         .btn-principal:active { background-color: #0d47a1; transform: scale(0.95); }
         .hidden { display: none !important; }
-        /* Estilo para el input de archivo */
         input[type="file"] { padding: 10px; background: #fafafa; border: 2px dashed #ddd; }
     </style>
 </head>
@@ -94,7 +93,8 @@
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbyzMP1S7pHt7iokTLNTn3HcFM0MGREjX4wcKf0ukMwuhtnLnoasnwlugx3rehw8ojQ3aA/exec";
+    // URL ACTUALIZADA CON TU NUEVA IMPLEMENTACIÓN
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbwv8xiPqvKfi_raPQ9yEsEiyYpPlZvM5ZaKqddVrvVDTDaZihWf_K_PtW77Jb0mJ4lzbw/exec";
 
     const unidadesData = {
         "ALIANZA REAL": ["6003", "6013", "6015", "6026", "6027", "6028", "6036", "6038", "6039", "6044", "6045", "6047", "6050", "6053", "6059", "6065", "6066", "6075", "6081", "6082", "6092", "6096", "6098", "6099", "6100"],
@@ -168,22 +168,15 @@
         btn.disabled = true;
         btn.innerText = "ENVIANDO...";
 
-        let base64 = "";
-        let fileName = "";
-        let mimeType = "";
-
-        // Si hay una foto, convertirla a Base64
         if (f) {
             const reader = new FileReader();
             reader.readAsDataURL(f);
             reader.onload = async () => {
-                base64 = reader.result.split(',')[1];
-                fileName = f.name;
-                mimeType = f.type;
-                ejecutarEnvio(r, u, k, m, c, base64, fileName, mimeType);
+                const base64 = reader.result.split(',')[1];
+                await ejecutarEnvio(r, u, k, m, c, base64, f.name, f.type);
             };
         } else {
-            ejecutarEnvio(r, u, k, m, c, "", "", "");
+            await ejecutarEnvio(r, u, k, m, c, "", "", "");
         }
     }
 
@@ -207,7 +200,7 @@
             alert("✅ GUARDADO EN EXCEL");
             document.getElementById('km').value = "";
             document.getElementById('comentarios').value = "";
-            document.getElementById('foto').value = ""; // Limpiar foto
+            document.getElementById('foto').value = "";
         } catch (e) {
             alert("❌ Error de red");
         } finally {
