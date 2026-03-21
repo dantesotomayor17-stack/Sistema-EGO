@@ -158,6 +158,7 @@
         const k = document.getElementById('km').value;
         const m = document.getElementById('manto').value;
         const c = document.getElementById('comentarios').value.trim();
+        const archivo = document.getElementById('foto').files[0];
 
         if(!r || !u || !k) return alert("Por favor, llena Ruta, Unidad y Kilometraje");
 
@@ -166,20 +167,52 @@
         btn.innerText = "ENVIANDO...";
 
         try {
+            let imagenBase64 = "";
+            let nombreArchivo = "";
+            let tipoArchivo = "";
+
+            if (archivo) {
+                const base64 = await convertirABase64(archivo);
+                imagenBase64 = base64.split(',')[1];
+                nombreArchivo = archivo.name;
+                tipoArchivo = archivo.type;
+            }
+
             await fetch(URL_WEBAPP, {
                 method: "POST",
                 mode: "no-cors",
-                body: JSON.stringify({ ruta: r, unidad: u, km: k, manto: m, comentarios: c })
+                body: JSON.stringify({
+                    ruta: r,
+                    unidad: u,
+                    km: k,
+                    manto: m,
+                    comentarios: c,
+                    imagen: imagenBase64,
+                    nombre: nombreArchivo,
+                    tipo: tipoArchivo
+                })
             });
+
             alert("✅ GUARDADO EN EXCEL");
             document.getElementById('km').value = "";
             document.getElementById('comentarios').value = "";
+            document.getElementById('foto').value = "";
+
         } catch (e) {
             alert("❌ Error de red");
         } finally {
             btn.disabled = false;
             btn.innerText = "REGISTRAR DATOS";
         }
+    }
+
+    function convertirABase64(archivo) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+            reader.readAsDataURL(archivo);
+        });
     }
 </script>
 
