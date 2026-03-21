@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>E.G.O - Sistema de Flota</title>
+    <title>E.G.O - Sistema de Flota Pro</title>
     <style>
+        /* Mantenemos tu estilo original con un toque de profundidad */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
         .container { max-width: 400px; width: 100%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
         h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
-        label { display: block; margin: 15px 0 5px; font-weight: bold; color: #444; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; color: #444; font-size: 14px; }
         select, input, textarea { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; -webkit-appearance: none; }
         select:focus, input:focus, textarea:focus { border-color: #1a73e8; }
         textarea { height: 80px; resize: none; font-family: inherit; }
         .btn-principal { width: 100%; padding: 18px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.2s; margin-top: 10px; -webkit-tap-highlight-color: transparent; }
         .btn-principal:active { background-color: #0d47a1; transform: scale(0.95); }
+        .btn-principal:disabled { background-color: #ccc; cursor: not-allowed; }
         .hidden { display: none !important; }
+        .status-msg { text-align: center; font-size: 12px; color: #666; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -83,17 +86,16 @@
         <label>5. Comentarios / Reporte de Falla:</label>
         <textarea id="comentarios" placeholder="Escribe aquí si la unidad tiene algún detalle..."></textarea>
 
-        <label>6. Subir Foto (opcional):</label>
-        <input type="file" id="foto" accept="image/*">
-
         <button id="btnRegistrar" class="btn-principal" onclick="enviarDatos()">REGISTRAR DATOS</button>
+        <div id="status" class="status-msg"></div>
     </div>
 </div>
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxrob2QRQBBE2dbZGWtnRWfJFzocbbAm1fwqa-wyhztwWpCGPBWNPlyfJ-PrDFfm39Dlg/exec";
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbyzMP1S7pHt7iokTLNTn3HcFM0MGREjX4wcKf0ukMwuhtnLnoasnwlugx3rehw8ojQ3aA/exec";
 
+    // Mantenemos tu base de datos de unidades
     const unidadesData = {
         "ALIANZA REAL": ["6003", "6013", "6015", "6026", "6027", "6028", "6036", "6038", "6039", "6044", "6045", "6047", "6050", "6053", "6059", "6065", "6066", "6075", "6081", "6082", "6092", "6096", "6098", "6099", "6100"],
         "CIENEGA DE FLORES": ["3386", "3409", "3415", "3425", "3427", "3431", "3433", "3450", "3459", "3466", "3544", "3565", "3579", "3584", "3585"],
@@ -129,7 +131,7 @@
     function verificarPass() {
         const input = document.getElementById('passInput');
         const pass = input.value.trim().toUpperCase();
-        if (pass === CLAVE_ACCESO) {
+        if(pass === CLAVE_ACCESO) {
             document.getElementById('sec-pass').style.display = 'none';
             document.getElementById('sec-form').classList.remove('hidden');
         } else {
@@ -142,7 +144,6 @@
         const r = document.getElementById('ruta').value;
         const u = document.getElementById('unidad');
         u.innerHTML = '<option value="">-- Seleccionar --</option>';
-
         if (r && unidadesData[r]) {
             unidadesData[r].forEach(num => {
                 const opt = document.createElement('option');
@@ -159,64 +160,48 @@
         const k = document.getElementById('km').value;
         const m = document.getElementById('manto').value;
         const c = document.getElementById('comentarios').value.trim();
-        const archivo = document.getElementById('foto').files[0];
+        const status = document.getElementById('status');
 
-        if (!r || !u || !k) {
-            return alert("Por favor, llena Ruta, Unidad y Kilometraje");
-        }
+        if(!r || !u || !k) return alert("Por favor, llena Ruta, Unidad y Kilometraje");
+
+        // Pequeña validación pro: evitar kilometrajes irreales
+        if(k <= 0) return alert("El kilometraje debe ser mayor a 0");
 
         const btn = document.getElementById('btnRegistrar');
         btn.disabled = true;
         btn.innerText = "ENVIANDO...";
+        status.innerText = "Conectando con el servidor...";
+
+        const payload = { 
+            fecha: new Date().toLocaleString(), 
+            ruta: r, 
+            unidad: u, 
+            km: k, 
+            manto: m, 
+            comentarios: c 
+        };
 
         try {
-            let imagenBase64 = "";
-            let nombreArchivo = "";
-            let tipoArchivo = "";
-
-            if (archivo) {
-                const base64 = await convertirABase64(archivo);
-                imagenBase64 = base64.split(',')[1];
-                nombreArchivo = archivo.name;
-                tipoArchivo = archivo.type;
-            }
-
             await fetch(URL_WEBAPP, {
                 method: "POST",
                 mode: "no-cors",
-                body: JSON.stringify({
-                    ruta: r,
-                    unidad: u,
-                    km: k,
-                    manto: m,
-                    comentarios: c,
-                    imagen: imagenBase64,
-                    nombre: nombreArchivo,
-                    tipo: tipoArchivo
-                })
+                body: JSON.stringify(payload)
             });
-
+            
+            status.innerText = "✅ Datos enviados correctamente.";
             alert("✅ GUARDADO EN EXCEL");
+            
+            // Limpieza inteligente
             document.getElementById('km').value = "";
             document.getElementById('comentarios').value = "";
-            document.getElementById('foto').value = "";
-            document.getElementById('manto').value = "N/A";
-
+            
         } catch (e) {
+            status.innerText = "❌ Error de conexión.";
             alert("❌ Error de red");
         } finally {
             btn.disabled = false;
             btn.innerText = "REGISTRAR DATOS";
         }
-    }
-
-    function convertirABase64(archivo) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-            reader.readAsDataURL(archivo);
-        });
     }
 </script>
 
