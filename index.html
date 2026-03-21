@@ -15,6 +15,8 @@
         .btn-principal { width: 100%; padding: 18px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.2s; margin-top: 10px; -webkit-tap-highlight-color: transparent; }
         .btn-principal:active { background-color: #0d47a1; transform: scale(0.95); }
         .hidden { display: none !important; }
+        /* Estilo para el input de archivo */
+        input[type="file"] { padding: 10px; background: #fafafa; border: 2px dashed #ddd; }
     </style>
 </head>
 <body>
@@ -83,6 +85,9 @@
         <label>5. Comentarios / Reporte de Falla:</label>
         <textarea id="comentarios" placeholder="Escribe aquí si la unidad tiene algún detalle..."></textarea>
 
+        <label>6. Evidencia Fotográfica (Opcional):</label>
+        <input type="file" id="foto" accept="image/*" capture="environment">
+
         <button id="btnRegistrar" class="btn-principal" onclick="enviarDatos()">REGISTRAR DATOS</button>
     </div>
 </div>
@@ -99,7 +104,7 @@
         "PALMIRAS": ["6048", "6055", "6076", "6079", "6093"],
         "RUTA 20": ["6004", "6012", "6016", "6017", "6018", "6020", "6032", "6034", "6035", "6046", "6049", "6051", "6057", "6061", "6071", "6072", "6073", "6084", "6090", "6091"],
         "RUTA 109": ["3201", "3202", "3203", "3204", "3205", "3207", "3208", "3209", "3213", "3217", "3218", "3219", "3220", "3222", "3225", "3226", "3229", "3230", "3231", "3232", "3234", "3235", "3238", "3239", "3241", "3243", "3245", "3246", "3248", "3249", "3252", "3428", "3430", "3482", "3489", "3503", "3511", "3599", "3600"],
-        "RUTA 117": ["3163", "3164", "3165", "3166", "3167", "3168", "3169", "3170", "3171", "3172", "3173", "3174", "3175", "3176", "3177", "3178", "3179", "3180", "3181", "3182", "3183", "3184", "3185", "3186", "3187", "3188", "3189", "3190", "3191", "3192"],
+        "RUTA 117": ["3163", "3164", "3165", "3166", "3167", "3168", "3169", "3170", "3171", "3172", "3173", "3174", "3175", "3177", "3178", "3179", "3180", "3181", "3182", "3183", "3184", "3185", "3186", "3187", "3188", "3189", "3190", "3191", "3192"],
         "RUTA 206": ["3397", "3417", "3418", "3420", "3422", "3435", "3436", "3438", "3442", "3461", "3463", "3470", "3552", "3553", "3556", "3559"],
         "RUTA 218": ["3331", "3333", "3334", "3336", "3337", "3338", "3339", "3341", "3342", "3350", "3355", "3356", "3404", "3406", "3408", "3412", "3416", "3419", "3424", "3432", "3440", "3454"],
         "RUTA 218-AEROPUERTO": ["6070", "6074", "6078", "6083", "6085", "6086", "6087", "6089", "6095", "6097"],
@@ -155,6 +160,7 @@
         const k = document.getElementById('km').value;
         const m = document.getElementById('manto').value;
         const c = document.getElementById('comentarios').value.trim();
+        const f = document.getElementById('foto').files[0];
 
         if(!r || !u || !k) return alert("Por favor, llena Ruta, Unidad y Kilometraje");
 
@@ -162,15 +168,46 @@
         btn.disabled = true;
         btn.innerText = "ENVIANDO...";
 
+        let base64 = "";
+        let fileName = "";
+        let mimeType = "";
+
+        // Si hay una foto, convertirla a Base64
+        if (f) {
+            const reader = new FileReader();
+            reader.readAsDataURL(f);
+            reader.onload = async () => {
+                base64 = reader.result.split(',')[1];
+                fileName = f.name;
+                mimeType = f.type;
+                ejecutarEnvio(r, u, k, m, c, base64, fileName, mimeType);
+            };
+        } else {
+            ejecutarEnvio(r, u, k, m, c, "", "", "");
+        }
+    }
+
+    async function ejecutarEnvio(r, u, k, m, c, img, name, type) {
+        const btn = document.getElementById('btnRegistrar');
         try {
             await fetch(URL_WEBAPP, {
                 method: "POST",
                 mode: "no-cors",
-                body: JSON.stringify({ ruta: r, unidad: u, km: k, manto: m, comentarios: c })
+                body: JSON.stringify({ 
+                    ruta: r, 
+                    unidad: u, 
+                    km: k, 
+                    manto: m, 
+                    comentarios: c,
+                    foto: img,
+                    nombreFoto: name,
+                    tipoFoto: type
+                })
             });
             alert("✅ GUARDADO EN EXCEL");
             document.getElementById('km').value = "";
             document.getElementById('comentarios').value = "";
+            document.getElementById('foto').value = ""; // Limpiar foto
         } catch (e) {
             alert("❌ Error de red");
         } finally {
