@@ -14,7 +14,6 @@
         .btn-principal { width: 100%; padding: 18px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.2s; margin-top: 10px; }
         .btn-foto { background-color: #34a853; margin-bottom: 10px; font-size: 14px; padding: 12px; }
         .hidden { display: none !important; }
-        /* Actualicé esto para que las 4 fotos se vean bien una tras otra */
         .img-preview { width: 100%; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; display: none; border: 1px solid #ddd; }
         .status { text-align: center; font-size: 14px; color: #666; margin-top: 10px; font-weight: bold; }
     </style>
@@ -163,7 +162,6 @@
         }
     }
 
-    // ACTUALIZADO: Función ahora recibe el ID del elemento img para mostrar la preview correcta
     function mostrarPreview(input, imgId) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -176,9 +174,8 @@
         }
     }
 
-    // NUEVA: Función auxiliar para subir a Cloudinary y no repetir código
     async function subirACloudinary(file) {
-        if(!file) return "Sin foto";
+        if(!file) return null; // Retornamos null si no hay archivo
         const formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', UPLOAD_PRESET);
@@ -188,10 +185,10 @@
                 body: formData
             });
             const data = await resp.json();
-            return data.secure_url || "Sin foto";
+            return data.secure_url || "Error en subida";
         } catch (e) {
             console.error("Error subida:", e);
-            return "Error en subida";
+            return "Error técnico";
         }
     }
 
@@ -199,58 +196,71 @@
         const status = document.getElementById('statusMsg');
         const btn = document.getElementById('btnRegistrar');
 
+        // Captura de datos básicos
         const r = document.getElementById('ruta').value;
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
 
-        if(!r || !u || !k) return alert("Ruta, Unidad y Kilometraje son obligatorios.");
-
-        btn.disabled = true;
-        btn.innerText = "SUBIENDO EVIDENCIAS...";
-        
-        // Obtenemos los 4 archivos
+        // Captura de archivos de los inputs
         const fOdo = document.getElementById('fotoInput').files[0];
         const fUni = document.getElementById('fotoUnidad').files[0];
         const fIne = document.getElementById('fotoIne').files[0];
         const fVin = document.getElementById('fotoVin').files[0];
 
-        status.innerText = "Subiendo fotos a la nube (Paso 1/4)...";
-        const urlOdo = await subirACloudinary(fOdo);
+        // VALIDACIÓN OBLIGATORIA (LA ADUANA)
+        if (!r) return alert("⚠️ Error: Selecciona la RUTA.");
+        if (!u) return alert("⚠️ Error: Selecciona la UNIDAD.");
+        if (!k) return alert("⚠️ Error: Ingresa el KILOMETRAJE.");
         
-        status.innerText = "Subiendo fotos a la nube (Paso 2/4)...";
-        const urlUni = await subirACloudinary(fUni);
-        
-        status.innerText = "Subiendo fotos a la nube (Paso 3/4)...";
-        const urlIne = await subirACloudinary(fIne);
-        
-        status.innerText = "Subiendo fotos a la nube (Paso 4/4)...";
-        const urlVin = await subirACloudinary(fVin);
+        // Verificación de fotos obligatorias
+        if (!fOdo) return alert("📸 FALTA LA FOTO DEL ODÓMETRO.");
+        if (!fUni) return alert("📸 FALTA LA FOTO DE LA UNIDAD.");
+        if (!fIne) return alert("📸 FALTA LA FOTO DEL INE.");
+        if (!fVin) return alert("📸 FALTA LA FOTO DEL VIN (SERIE).");
 
-        status.innerText = "Guardando todo en la base de datos...";
+        // Inicio del proceso de guardado
+        btn.disabled = true;
+        btn.innerText = "SUBIENDO EVIDENCIAS...";
         
-        const payload = {
-            ruta: r,
-            unidad: u,
-            km: k,
-            manto: document.getElementById('manto').value,
-            comentarios: document.getElementById('comentarios').value,
-            fotoOdo: urlOdo,
-            fotoUni: urlUni,
-            fotoIne: urlIne,
-            fotoVin: urlVin
-        };
-
         try {
+            status.innerText = "Subiendo fotos (Paso 1/4)...";
+            const urlOdo = await subirACloudinary(fOdo);
+            
+            status.innerText = "Subiendo fotos (Paso 2/4)...";
+            const urlUni = await subirACloudinary(fUni);
+            
+            status.innerText = "Subiendo fotos (Paso 3/4)...";
+            const urlIne = await subirACloudinary(fIne);
+            
+            status.innerText = "Subiendo fotos (Paso 4/4)...";
+            const urlVin = await subirACloudinary(fVin);
+
+            status.innerText = "Guardando en la base de datos...";
+            
+            const payload = {
+                ruta: r,
+                unidad: u,
+                km: k,
+                manto: document.getElementById('manto').value,
+                comentarios: document.getElementById('comentarios').value,
+                fotoOdo: urlOdo,
+                fotoUni: urlUni,
+                fotoIne: urlIne,
+                fotoVin: urlVin
+            };
+
             await fetch(URL_WEBAPP, {
                 method: "POST",
                 mode: "no-cors",
                 body: JSON.stringify(payload)
             });
+
             alert("✅ REGISTRO COMPLETO GUARDADO");
             location.reload();
         } catch (e) {
-            alert("❌ Error al guardar.");
+            alert("❌ Error al guardar datos.");
             btn.disabled = false;
+            btn.innerText = "REGISTRAR DATOS";
         }
     }
 </script>
