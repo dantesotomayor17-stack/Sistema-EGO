@@ -12,9 +12,10 @@
         select, input, textarea { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; }
         select:focus, input:focus { border-color: #1a73e8; }
         .btn-principal { width: 100%; padding: 18px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.2s; margin-top: 10px; }
-        .btn-foto { background-color: #34a853; margin-bottom: 15px; }
+        .btn-foto { background-color: #34a853; margin-bottom: 10px; font-size: 14px; padding: 12px; }
         .hidden { display: none !important; }
-        #preview { width: 100%; border-radius: 8px; margin-top: 10px; margin-bottom: 10px; display: none; border: 1px solid #ddd; }
+        /* Actualicé esto para que las 4 fotos se vean bien una tras otra */
+        .img-preview { width: 100%; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; display: none; border: 1px solid #ddd; }
         .status { text-align: center; font-size: 14px; color: #666; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
@@ -67,10 +68,23 @@
         <label>3. Kilometraje Actual:</label>
         <input type="number" id="km" placeholder="Ej: 150000" inputmode="numeric">
 
-        <label>4. Evidencia (Foto):</label>
-        <input type="file" id="fotoInput" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this)">
-        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoInput').click()">📸 TOMAR FOTO ODÓMETRO</button>
-        <img id="preview" src="" alt="Vista previa">
+        <label>4. Evidencias (Fotos):</label>
+        
+        <input type="file" id="fotoInput" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewOdo')">
+        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoInput').click()">📸 FOTO ODÓMETRO</button>
+        <img id="previewOdo" class="img-preview">
+
+        <input type="file" id="fotoUnidad" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewUnidad')">
+        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoUnidad').click()">📸 FOTO UNIDAD</button>
+        <img id="previewUnidad" class="img-preview">
+
+        <input type="file" id="fotoIne" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewIne')">
+        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoIne').click()">📸 FOTO INE OPERADOR</button>
+        <img id="previewIne" class="img-preview">
+
+        <input type="file" id="fotoVin" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewVin')">
+        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoVin').click()">📸 FOTO VIN (SERIE)</button>
+        <img id="previewVin" class="img-preview">
 
         <label>5. Tipo de Mantenimiento:</label>
         <select id="manto">
@@ -149,11 +163,12 @@
         }
     }
 
-    function mostrarPreview(input) {
+    // ACTUALIZADO: Función ahora recibe el ID del elemento img para mostrar la preview correcta
+    function mostrarPreview(input, imgId) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = e => { 
-                const img = document.getElementById('preview');
+                const img = document.getElementById(imgId);
                 img.src = e.target.result;
                 img.style.display = 'block';
             };
@@ -161,8 +176,26 @@
         }
     }
 
+    // NUEVA: Función auxiliar para subir a Cloudinary y no repetir código
+    async function subirACloudinary(file) {
+        if(!file) return "Sin foto";
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', UPLOAD_PRESET);
+        try {
+            const resp = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await resp.json();
+            return data.secure_url || "Sin foto";
+        } catch (e) {
+            console.error("Error subida:", e);
+            return "Error en subida";
+        }
+    }
+
     async function iniciarRegistro() {
-        const fileInput = document.getElementById('fotoInput');
         const status = document.getElementById('statusMsg');
         const btn = document.getElementById('btnRegistrar');
 
@@ -173,42 +206,38 @@
         if(!r || !u || !k) return alert("Ruta, Unidad y Kilometraje son obligatorios.");
 
         btn.disabled = true;
-        btn.innerText = "PROCESANDO...";
-        status.innerText = "Paso 1/2: Subiendo imagen a la nube...";
+        btn.innerText = "SUBIENDO EVIDENCIAS...";
+        
+        // Obtenemos los 4 archivos
+        const fOdo = document.getElementById('fotoInput').files[0];
+        const fUni = document.getElementById('fotoUnidad').files[0];
+        const fIne = document.getElementById('fotoIne').files[0];
+        const fVin = document.getElementById('fotoVin').files[0];
 
-        let fotoUrl = "Sin foto";
+        status.innerText = "Subiendo fotos a la nube (Paso 1/4)...";
+        const urlOdo = await subirACloudinary(fOdo);
+        
+        status.innerText = "Subiendo fotos a la nube (Paso 2/4)...";
+        const urlUni = await subirACloudinary(fUni);
+        
+        status.innerText = "Subiendo fotos a la nube (Paso 3/4)...";
+        const urlIne = await subirACloudinary(fIne);
+        
+        status.innerText = "Subiendo fotos a la nube (Paso 4/4)...";
+        const urlVin = await subirACloudinary(fVin);
 
-        if(fileInput.files.length > 0) {
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
-            formData.append('upload_preset', UPLOAD_PRESET);
-
-            try {
-                const resp = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await resp.json();
-                if(data.secure_url) {
-                    fotoUrl = data.secure_url;
-                }
-            } catch (e) {
-                console.error("Error Cloudinary:", e);
-            }
-        }
-
-        status.innerText = "Paso 2/2: Guardando en base de datos...";
-        enviarAGoogle(fotoUrl);
-    }
-
-    async function enviarAGoogle(fotoUrl) {
+        status.innerText = "Guardando todo en la base de datos...";
+        
         const payload = {
-            ruta: document.getElementById('ruta').value,
-            unidad: document.getElementById('unidad').value,
-            km: document.getElementById('km').value,
+            ruta: r,
+            unidad: u,
+            km: k,
             manto: document.getElementById('manto').value,
             comentarios: document.getElementById('comentarios').value,
-            foto: fotoUrl
+            fotoOdo: urlOdo,
+            fotoUni: urlUni,
+            fotoIne: urlIne,
+            fotoVin: urlVin
         };
 
         try {
@@ -217,11 +246,11 @@
                 mode: "no-cors",
                 body: JSON.stringify(payload)
             });
-            alert("✅ DATOS GUARDADOS CORRECTAMENTE");
+            alert("✅ REGISTRO COMPLETO GUARDADO");
             location.reload();
         } catch (e) {
-            alert("❌ Error al guardar en Excel.");
-            document.getElementById('btnRegistrar').disabled = false;
+            alert("❌ Error al guardar.");
+            btn.disabled = false;
         }
     }
 </script>
