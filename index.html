@@ -104,7 +104,8 @@
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbzOOFRVsIZJRNO8yuEsWEa9XI2z8LqL0HHZnypFr92Zp8bGgsRcQEOia52G_Ft195tKXw/exec";
+    // TU NUEVA URL ACTUALIZADA
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbz-IGdH4_vwn5ly_rGsA7cPM-o2u3wfg1ezgEi57mhkybr2Iu5onYWSX06H_2l32Wwwlw/exec";
     const CLOUD_NAME = "dygb7qjgt";
     const UPLOAD_PRESET = "ego_fotos";
 
@@ -175,7 +176,7 @@
     }
 
     async function subirACloudinary(file) {
-        if(!file) return null; // Retornamos null si no hay archivo
+        if(!file) return null;
         const formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', UPLOAD_PRESET);
@@ -201,7 +202,7 @@
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
 
-        // Captura de archivos de los inputs
+        // Captura de archivos
         const fOdo = document.getElementById('fotoInput').files[0];
         const fUni = document.getElementById('fotoUnidad').files[0];
         const fIne = document.getElementById('fotoIne').files[0];
@@ -218,7 +219,7 @@
         if (!fIne) return alert("📸 FALTA LA FOTO DEL INE.");
         if (!fVin) return alert("📸 FALTA LA FOTO DEL VIN (SERIE).");
 
-        // Inicio del proceso de guardado
+        // Inicio del proceso
         btn.disabled = true;
         btn.innerText = "SUBIENDO EVIDENCIAS...";
         
