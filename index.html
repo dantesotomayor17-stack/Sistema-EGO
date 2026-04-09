@@ -104,8 +104,8 @@
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    // TU NUEVA URL ACTUALIZADA
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbz-IGdH4_vwn5ly_rGsA7cPM-o2u3wfg1ezgEi57mhkybr2Iu5onYWSX06H_2l32Wwwlw/exec";
+    // URL ACTUALIZADA CON TU NUEVA IMPLEMENTACIÓN
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxqYw1mrifjcrQuca841A98wan2En7iKTzNjT0Yam83skrd73rA6znOPX3ABMGM7pdJvw/exec";
     const CLOUD_NAME = "dygb7qjgt";
     const UPLOAD_PRESET = "ego_fotos";
 
@@ -197,29 +197,24 @@
         const status = document.getElementById('statusMsg');
         const btn = document.getElementById('btnRegistrar');
 
-        // Captura de datos básicos
         const r = document.getElementById('ruta').value;
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
 
-        // Captura de archivos
         const fOdo = document.getElementById('fotoInput').files[0];
         const fUni = document.getElementById('fotoUnidad').files[0];
         const fIne = document.getElementById('fotoIne').files[0];
         const fVin = document.getElementById('fotoVin').files[0];
 
-        // VALIDACIÓN OBLIGATORIA (LA ADUANA)
         if (!r) return alert("⚠️ Error: Selecciona la RUTA.");
         if (!u) return alert("⚠️ Error: Selecciona la UNIDAD.");
         if (!k) return alert("⚠️ Error: Ingresa el KILOMETRAJE.");
         
-        // Verificación de fotos obligatorias
         if (!fOdo) return alert("📸 FALTA LA FOTO DEL ODÓMETRO.");
         if (!fUni) return alert("📸 FALTA LA FOTO DE LA UNIDAD.");
         if (!fIne) return alert("📸 FALTA LA FOTO DEL INE.");
         if (!fVin) return alert("📸 FALTA LA FOTO DEL VIN (SERIE).");
 
-        // Inicio del proceso
         btn.disabled = true;
         btn.innerText = "SUBIENDO EVIDENCIAS...";
         
