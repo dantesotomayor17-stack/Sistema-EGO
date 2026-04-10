@@ -17,6 +17,10 @@
         .hidden { display: none !important; }
         .img-preview { width: 100%; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; display: none; border: 1px solid #ddd; }
         .status { text-align: center; font-size: 14px; color: #666; margin-top: 10px; font-weight: bold; }
+
+        /* --- ESTILOS DE LA BARRA DE PROGRESO --- */
+        #progressContainer { width: 100%; background-color: #eee; border-radius: 10px; margin-top: 15px; display: none; overflow: hidden; border: 1px solid #ddd; }
+        #progressBar { width: 0%; height: 20px; background-color: #1a73e8; transition: width 0.4s ease; }
     </style>
 </head>
 <body>
@@ -98,8 +102,12 @@
         <label>6. Comentarios / Reporte:</label>
         <textarea id="comentarios" style="width:100%; height:60px;" placeholder="Detalles si los hay..."></textarea>
 
-        <button id="btnRegistrar" class="btn-principal" onclick="iniciarRegistro()">REGISTRAR DATOS</button>
+        <div id="progressContainer">
+            <div id="progressBar"></div>
+        </div>
         <div id="statusMsg" class="status"></div>
+
+        <button id="btnRegistrar" class="btn-principal" onclick="iniciarRegistro()">REGISTRAR DATOS</button>
     </div>
 </div>
 
@@ -130,7 +138,7 @@
         "RUTA 228": ["3019", "3021", "3022", "3023", "3024", "3025", "3026", "3027", "3028", "3029", "3030", "3031", "3032", "3033", "3034", "3035", "3036", "3037", "3038", "3039", "3040", "3041", "3042", "3043", "3045", "3046", "3047", "3048", "3049", "3052", "3053", "3054", "3055", "3056", "3057", "3058", "3059", "3060", "3061", "3062", "3198", "3216"],
         "RUTA 233": ["3001", "3002", "3003", "3004", "3005", "3044", "3123", "3251", "3305", "3325", "3340", "3344", "3380", "3390", "3399", "3401", "3448", "3455", "3476", "3522", "3554", "3556", "3561", "3580", "3587", "3594", "3598"],
         "RUTA 310": ["3011", "3012", "3013", "3014", "3015", "3016", "3017", "3018", "3020", "3051", "3088", "3089", "3090", "3091", "3092", "3093", "3094", "3095", "3096", "3097", "3098", "3099", "3100", "3101", "3102", "3103", "3104", "3130", "3131", "3132", "3133", "3134", "3135", "3136", "3137", "3138", "3139", "3140", "3141", "3142", "3143", "3144", "3145", "3146", "3147", "3148", "3149", "3150", "3151", "3152", "3153", "3154", "3155", "3156", "3157", "3158", "3159", "3160", "3161", "3162", "3447", "3451", "3457", "3458", "3465", "3467", "3550", "3551", "3557", "3558", "3560", "3562", "3566", "3567", "3569", "3570", "3571", "3572", "3573", "3575", "3577", "3581", "3596"],
-        "RUTA 311": ["3227", "3260", "3292", "3301", "3308", "3309", "3310", "3312", "3315", "3318", "3319", "3320", "3321", "3475", "3477", "3484", "3493", "3494", "3497", "3498"],
+        "RUTA 311": ["3227", "3260", "3292", "3301", "3308", "3309", "3310", "3312", "3315", "3318", "3318", "3319", "3320", "3321", "3475", "3477", "3484", "3493", "3494", "3497", "3498"],
         "RUTA 313": ["3499", "3502", "3510", "3513", "3514", "3516", "3517", "3518", "3519", "3521", "3524", "3526", "3527"],
         "RUTA 527": ["3063", "3064", "3065", "3066", "3067", "3068", "3069", "3070", "3071", "3072", "3073", "3074", "3075", "3076", "3077", "3078", "3079", "3080", "3081", "3082", "3083", "3084", "3085", "3086", "3087", "3354", "3358", "3361", "3363", "3365", "3366", "3369", "3370", "3371", "3372", "3373", "3375", "3376", "3377", "3378", "3379", "3394", "3400", "3444", "3453", "3456", "3460", "3462", "3464", "3468", "3469", "3471"],
         "RUTA 601": ["3105", "3106", "3107", "3108", "3109", "3110", "3111", "3112", "3113", "3114", "3115", "3116", "3117", "3118", "3119", "3120", "3121", "3122", "3124", "3125", "3126", "3127", "3128", "3129", "3193", "3330", "3335", "3343", "3346", "3347", "3349", "3357", "3359", "3364", "3367", "3382", "3387", "3388", "3389", "3391", "3393", "3396", "3402", "3411", "3413"],
@@ -175,7 +183,6 @@
         }
     }
 
-    // --- FUNCIÓN DE COMPRESIÓN MANTENIDA ---
     async function comprimirImagen(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -187,23 +194,19 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-
-                    // Ajuste de resolución para reducir peso drásticamente
                     const MAX_WIDTH = 1200;
                     if (width > MAX_WIDTH) {
                         height *= MAX_WIDTH / width;
                         width = MAX_WIDTH;
                     }
-
                     canvas.width = width;
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-
                     canvas.toBlob((blob) => {
                         const newFile = new File([blob], file.name, { type: 'image/jpeg' });
                         resolve(newFile);
-                    }, 'image/jpeg', 0.7); // 70% de calidad
+                    }, 'image/jpeg', 0.7);
                 };
             };
         });
@@ -211,14 +214,10 @@
 
     async function subirACloudinary(file) {
         if(!file) return null;
-        
-        // Comprimir antes de enviar
         const archivoLigero = await comprimirImagen(file);
-        
         const formData = new FormData();
         formData.append('file', archivoLigero);
         formData.append('upload_preset', UPLOAD_PRESET);
-
         try {
             const resp = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
                 method: 'POST',
@@ -232,9 +231,16 @@
         }
     }
 
+    // --- FUNCIÓN PARA ACTUALIZAR LA BARRA ---
+    function actualizarBarra(porcentaje) {
+        const bar = document.getElementById('progressBar');
+        bar.style.width = porcentaje + "%";
+    }
+
     async function iniciarRegistro() {
         const status = document.getElementById('statusMsg');
         const btn = document.getElementById('btnRegistrar');
+        const progressCont = document.getElementById('progressContainer');
 
         const r = document.getElementById('ruta').value;
         const u = document.getElementById('unidad').value;
@@ -249,33 +255,34 @@
         if (!fOdo || !fUni || !fIne || !fVin) return alert("📸 Faltan fotos obligatorias.");
 
         btn.disabled = true;
-        btn.innerText = "PROCESANDO Y SUBIENDO...";
+        btn.innerText = "SUBIENDO...";
+        progressCont.style.display = 'block'; // Mostrar la barra
+        actualizarBarra(5); // Iniciar en 5%
         
         try {
-            status.innerText = "Optimizando y subiendo fotos (1/4)...";
+            status.innerText = "Procesando Foto Odómetro...";
             const urlOdo = await subirACloudinary(fOdo);
+            actualizarBarra(25);
             
-            status.innerText = "Optimizando y subiendo fotos (2/4)...";
+            status.innerText = "Procesando Foto Unidad...";
             const urlUni = await subirACloudinary(fUni);
+            actualizarBarra(50);
             
-            status.innerText = "Optimizando y subiendo fotos (3/4)...";
+            status.innerText = "Procesando Foto INE...";
             const urlIne = await subirACloudinary(fIne);
+            actualizarBarra(75);
             
-            status.innerText = "Optimizando y subiendo fotos (4/4)...";
+            status.innerText = "Procesando Foto VIN...";
             const urlVin = await subirACloudinary(fVin);
+            actualizarBarra(90);
 
-            status.innerText = "Guardando en la base de datos...";
+            status.innerText = "Guardando en Excel...";
             
             const payload = {
-                ruta: r,
-                unidad: u,
-                km: k,
+                ruta: r, unidad: u, km: k,
                 manto: document.getElementById('manto').value,
                 comentarios: document.getElementById('comentarios').value,
-                fotoOdo: urlOdo,
-                fotoUni: urlUni,
-                fotoIne: urlIne,
-                fotoVin: urlVin
+                fotoOdo: urlOdo, fotoUni: urlUni, fotoIne: urlIne, fotoVin: urlVin
             };
 
             await fetch(URL_WEBAPP, {
@@ -284,12 +291,15 @@
                 body: JSON.stringify(payload)
             });
 
+            actualizarBarra(100);
+            status.innerText = "¡Listo!";
             alert("✅ REGISTRO COMPLETO GUARDADO");
             location.reload();
         } catch (e) {
             alert("❌ Error al guardar datos.");
             btn.disabled = false;
             btn.innerText = "REGISTRAR DATOS";
+            progressCont.style.display = 'none';
         }
     }
 </script>
