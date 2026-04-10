@@ -78,9 +78,9 @@
         <button class="btn-principal btn-foto" onclick="document.getElementById('fotoInput').click()">📸 FOTO ODÓMETRO</button>
         <img id="previewOdo" class="img-preview">
 
-        <input type="file" id="fotoUnidad" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewUnidad')">
-        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoUnidad').click()">📸 FOTO UNIDAD</button>
-        <img id="previewUnidad" class="img-preview">
+        <input type="file" id="fotoFrontal" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewFrontal')">
+        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoFrontal').click()">📸 FOTO FRONTAL</button>
+        <img id="previewFrontal" class="img-preview">
 
         <input type="file" id="fotoLicencia" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewLicencia')">
         <button class="btn-principal btn-foto" onclick="document.getElementById('fotoLicencia').click()">📸 FOTO LICENCIA OPERADOR</button>
@@ -89,6 +89,18 @@
         <input type="file" id="fotoVin" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewVin')">
         <button class="btn-principal btn-foto" onclick="document.getElementById('fotoVin').click()">📸 FOTO VIN (SERIE)</button>
         <img id="previewVin" class="img-preview">
+
+        <input type="file" id="fotoTrasera" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewTrasera')">
+        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoTrasera').click()">📸 PARTE TRASERA</button>
+        <img id="previewTrasera" class="img-preview">
+
+        <input type="file" id="fotoDerecha" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewDerecha')">
+        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoDerecha').click()">📸 LATERAL DERECHO</button>
+        <img id="previewDerecha" class="img-preview">
+
+        <input type="file" id="fotoIzquierda" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewIzquierda')">
+        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoIzquierda').click()">📸 LATERAL IZQUIERDO</button>
+        <img id="previewIzquierda" class="img-preview">
 
         <label>5. Tipo de Mantenimiento:</label>
         <select id="manto">
@@ -113,8 +125,7 @@
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    // URL ACTUALIZADA CON TU NUEVA IMPLEMENTACIÓN
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbyOHehfIMXNmgbGtYRB8ufv13g1oUDkaIg6uSn2jOnM1pVvyqUw_equBcCdhuTVg1lryg/exec";
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxqYw1mrifjcrQuca841A98wan2En7iKTzNjT0Yam83skrd73rA6znOPX3ABMGM7pdJvw/exec";
     const CLOUD_NAME = "dygb7qjgt";
     const UPLOAD_PRESET = "ego_fotos";
 
@@ -246,34 +257,46 @@
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
 
+        // --- REFERENCIAS DE ARCHIVOS ---
         const fOdo = document.getElementById('fotoInput').files[0];
-        const fUni = document.getElementById('fotoUnidad').files[0];
-        const fLicencia = document.getElementById('fotoLicencia').files[0]; 
+        // --- CAMBIO AQUÍ: fotoUnidad SUSTITUIDA POR fotoFrontal ---
+        const fFro = document.getElementById('fotoFrontal').files[0]; 
+        const fLic = document.getElementById('fotoLicencia').files[0];
         const fVin = document.getElementById('fotoVin').files[0];
+        const fTra = document.getElementById('fotoTrasera').files[0];
+        const fDer = document.getElementById('fotoDerecha').files[0];
+        const fIzq = document.getElementById('fotoIzquierda').files[0];
 
         if (!r || !u || !k) return alert("⚠️ Llena Ruta, Unidad y Kilometraje.");
-        if (!fOdo || !fUni || !fLicencia || !fVin) return alert("📸 Faltan fotos obligatorias.");
+        // --- CAMBIO AQUÍ: VALIDACIÓN ACTUALIZADA ---
+        if (!fOdo || !fFro || !fLic || !fVin || !fTra || !fDer || !fIzq) {
+            return alert("📸 FALTAN FOTOS. Debes subir las 7 evidencias obligatorias.");
+        }
 
         btn.disabled = true;
-        btn.innerText = "SUBIENDO...";
+        btn.innerText = "SUBIENDO REPORTE...";
         progressCont.style.display = 'block'; 
-        actualizarBarra(5); 
+        actualizarBarra(2); 
         
         try {
-            status.innerText = "Procesando Foto Odómetro...";
+            status.innerText = "Subiendo Odo y Frontal...";
             const urlOdo = await subirACloudinary(fOdo);
+            // --- CAMBIO AQUÍ: SUBIDA SUSTITUIDA ---
+            const urlFro = await subirACloudinary(fFro); 
             actualizarBarra(25);
             
-            status.innerText = "Procesando Foto Unidad...";
-            const urlUni = await subirACloudinary(fUni);
+            status.innerText = "Subiendo Licencia y VIN...";
+            const urlLic = await subirACloudinary(fLic);
+            const urlVin = await subirACloudinary(fVin);
             actualizarBarra(50);
             
-            status.innerText = "Procesando Foto Licencia..."; 
-            const urlLicencia = await subirACloudinary(fLicencia); 
+            status.innerText = "Subiendo Trasera y Der...";
+            const urlTra = await subirACloudinary(fTra);
+            const urlDer = await subirACloudinary(fDer);
             actualizarBarra(75);
             
-            status.innerText = "Procesando Foto VIN...";
-            const urlVin = await subirACloudinary(fVin);
+            status.innerText = "Subiendo Izquierda...";
+            const urlIzq = await subirACloudinary(fIzq);
             actualizarBarra(90);
 
             status.innerText = "Guardando en Excel...";
@@ -283,9 +306,13 @@
                 manto: document.getElementById('manto').value,
                 comentarios: document.getElementById('comentarios').value,
                 fotoOdo: urlOdo, 
-                fotoUni: urlUni, 
-                fotoLicencia: urlLicencia, 
-                fotoVin: urlVin
+                // --- CAMBIO AQUÍ: PAYLOAD ACTUALIZADO ---
+                fotoFrontal: urlFro, 
+                fotoLicencia: urlLic,
+                fotoVin: urlVin,
+                fotoTrasera: urlTra,
+                fotoDerecha: urlDer,
+                fotoIzquierda: urlIzq
             };
 
             await fetch(URL_WEBAPP, {
@@ -296,7 +323,7 @@
 
             actualizarBarra(100);
             status.innerText = "¡Listo!";
-            alert("✅ REGISTRO COMPLETO GUARDADO");
+            alert("✅ REGISTRO COMPLETO GUARDADO CON ÉXITO");
             location.reload();
         } catch (e) {
             alert("❌ Error al guardar datos.");
