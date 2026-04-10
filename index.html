@@ -82,9 +82,9 @@
         <button class="btn-principal btn-foto" onclick="document.getElementById('fotoUnidad').click()">📸 FOTO UNIDAD</button>
         <img id="previewUnidad" class="img-preview">
 
-        <input type="file" id="fotoIne" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewIne')">
-        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoIne').click()">📸 FOTO INE OPERADOR</button>
-        <img id="previewIne" class="img-preview">
+        <input type="file" id="fotoLicencia" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewLicencia')">
+        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoLicencia').click()">📸 FOTO LICENCIA OPERADOR</button>
+        <img id="previewLicencia" class="img-preview">
 
         <input type="file" id="fotoVin" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewVin')">
         <button class="btn-principal btn-foto" onclick="document.getElementById('fotoVin').click()">📸 FOTO VIN (SERIE)</button>
@@ -231,7 +231,6 @@
         }
     }
 
-    // --- FUNCIÓN PARA ACTUALIZAR LA BARRA ---
     function actualizarBarra(porcentaje) {
         const bar = document.getElementById('progressBar');
         bar.style.width = porcentaje + "%";
@@ -246,18 +245,19 @@
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
 
+        // *** CAMBIO INTERNO DE VARIABLES DE INE A LICENCIA ***
         const fOdo = document.getElementById('fotoInput').files[0];
         const fUni = document.getElementById('fotoUnidad').files[0];
-        const fIne = document.getElementById('fotoIne').files[0];
+        const fLicencia = document.getElementById('fotoLicencia').files[0]; // Antes fIne
         const fVin = document.getElementById('fotoVin').files[0];
 
         if (!r || !u || !k) return alert("⚠️ Llena Ruta, Unidad y Kilometraje.");
-        if (!fOdo || !fUni || !fIne || !fVin) return alert("📸 Faltan fotos obligatorias.");
+        if (!fOdo || !fUni || !fLicencia || !fVin) return alert("📸 Faltan fotos obligatorias.");
 
         btn.disabled = true;
         btn.innerText = "SUBIENDO...";
-        progressCont.style.display = 'block'; // Mostrar la barra
-        actualizarBarra(5); // Iniciar en 5%
+        progressCont.style.display = 'block'; 
+        actualizarBarra(5); 
         
         try {
             status.innerText = "Procesando Foto Odómetro...";
@@ -268,8 +268,9 @@
             const urlUni = await subirACloudinary(fUni);
             actualizarBarra(50);
             
-            status.innerText = "Procesando Foto INE...";
-            const urlIne = await subirACloudinary(fIne);
+            // *** CAMBIO INTERNO DE MENSAJE Y VARIABLE ***
+            status.innerText = "Procesando Foto Licencia..."; // Antes INE
+            const urlLicencia = await subirACloudinary(fLicencia); // Antes urlIne
             actualizarBarra(75);
             
             status.innerText = "Procesando Foto VIN...";
@@ -278,11 +279,15 @@
 
             status.innerText = "Guardando en Excel...";
             
+            // *** CAMBIO INTERNO EN EL PAYLOAD PARA EL EXCEL ***
             const payload = {
                 ruta: r, unidad: u, km: k,
                 manto: document.getElementById('manto').value,
                 comentarios: document.getElementById('comentarios').value,
-                fotoOdo: urlOdo, fotoUni: urlUni, fotoIne: urlIne, fotoVin: urlVin
+                fotoOdo: urlOdo, 
+                fotoUni: urlUni, 
+                fotoLicencia: urlLicencia, // Esta columna cambiará en el Excel de INE a Licencia
+                fotoVin: urlVin
             };
 
             await fetch(URL_WEBAPP, {
