@@ -113,7 +113,8 @@
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxqYw1mrifjcrQuca841A98wan2En7iKTzNjT0Yam83skrd73rA6znOPX3ABMGM7pdJvw/exec";
+    // URL ACTUALIZADA CON TU NUEVA IMPLEMENTACIÓN
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbyOHehfIMXNmgbGtYRB8ufv13g1oUDkaIg6uSn2jOnM1pVvyqUw_equBcCdhuTVg1lryg/exec";
     const CLOUD_NAME = "dygb7qjgt";
     const UPLOAD_PRESET = "ego_fotos";
 
@@ -245,10 +246,9 @@
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
 
-        // *** CAMBIO INTERNO DE VARIABLES DE INE A LICENCIA ***
         const fOdo = document.getElementById('fotoInput').files[0];
         const fUni = document.getElementById('fotoUnidad').files[0];
-        const fLicencia = document.getElementById('fotoLicencia').files[0]; // Antes fIne
+        const fLicencia = document.getElementById('fotoLicencia').files[0]; 
         const fVin = document.getElementById('fotoVin').files[0];
 
         if (!r || !u || !k) return alert("⚠️ Llena Ruta, Unidad y Kilometraje.");
@@ -268,9 +268,8 @@
             const urlUni = await subirACloudinary(fUni);
             actualizarBarra(50);
             
-            // *** CAMBIO INTERNO DE MENSAJE Y VARIABLE ***
-            status.innerText = "Procesando Foto Licencia..."; // Antes INE
-            const urlLicencia = await subirACloudinary(fLicencia); // Antes urlIne
+            status.innerText = "Procesando Foto Licencia..."; 
+            const urlLicencia = await subirACloudinary(fLicencia); 
             actualizarBarra(75);
             
             status.innerText = "Procesando Foto VIN...";
@@ -279,14 +278,13 @@
 
             status.innerText = "Guardando en Excel...";
             
-            // *** CAMBIO INTERNO EN EL PAYLOAD PARA EL EXCEL ***
             const payload = {
                 ruta: r, unidad: u, km: k,
                 manto: document.getElementById('manto').value,
                 comentarios: document.getElementById('comentarios').value,
                 fotoOdo: urlOdo, 
                 fotoUni: urlUni, 
-                fotoLicencia: urlLicencia, // Esta columna cambiará en el Excel de INE a Licencia
+                fotoLicencia: urlLicencia, 
                 fotoVin: urlVin
             };
 
