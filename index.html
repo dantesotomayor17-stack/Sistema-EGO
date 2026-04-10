@@ -125,7 +125,8 @@
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxqYw1mrifjcrQuca841A98wan2En7iKTzNjT0Yam83skrd73rA6znOPX3ABMGM7pdJvw/exec";
+    // --- URL ACTUALIZADA CON TU NUEVO APPS SCRIPT ---
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxHCS1NCxsZ6h1Lt0WfGbXgjyi_0r5ww2ibgM4PhrpeRq-YWa7gVBZRttJ9W628q-BNZw/exec";
     const CLOUD_NAME = "dygb7qjgt";
     const UPLOAD_PRESET = "ego_fotos";
 
@@ -259,7 +260,6 @@
 
         // --- REFERENCIAS DE ARCHIVOS ---
         const fOdo = document.getElementById('fotoInput').files[0];
-        // --- CAMBIO AQUÍ: fotoUnidad SUSTITUIDA POR fotoFrontal ---
         const fFro = document.getElementById('fotoFrontal').files[0]; 
         const fLic = document.getElementById('fotoLicencia').files[0];
         const fVin = document.getElementById('fotoVin').files[0];
@@ -268,7 +268,6 @@
         const fIzq = document.getElementById('fotoIzquierda').files[0];
 
         if (!r || !u || !k) return alert("⚠️ Llena Ruta, Unidad y Kilometraje.");
-        // --- CAMBIO AQUÍ: VALIDACIÓN ACTUALIZADA ---
         if (!fOdo || !fFro || !fLic || !fVin || !fTra || !fDer || !fIzq) {
             return alert("📸 FALTAN FOTOS. Debes subir las 7 evidencias obligatorias.");
         }
@@ -281,7 +280,6 @@
         try {
             status.innerText = "Subiendo Odo y Frontal...";
             const urlOdo = await subirACloudinary(fOdo);
-            // --- CAMBIO AQUÍ: SUBIDA SUSTITUIDA ---
             const urlFro = await subirACloudinary(fFro); 
             actualizarBarra(25);
             
@@ -306,7 +304,6 @@
                 manto: document.getElementById('manto').value,
                 comentarios: document.getElementById('comentarios').value,
                 fotoOdo: urlOdo, 
-                // --- CAMBIO AQUÍ: PAYLOAD ACTUALIZADO ---
                 fotoFrontal: urlFro, 
                 fotoLicencia: urlLic,
                 fotoVin: urlVin,
