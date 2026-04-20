@@ -13,12 +13,15 @@
         select:focus, input:focus { border-color: #1a73e8; }
         .btn-principal { width: 100%; padding: 18px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.2s; margin-top: 10px; }
         .btn-principal:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        .btn-modo { background-color: #fff; color: #1a73e8; border: 2px solid #1a73e8; margin-bottom: 15px; }
+        .btn-modo:active { background-color: #1a73e8; color: white; }
+
         .btn-foto { background-color: #34a853; margin-bottom: 10px; font-size: 14px; padding: 12px; }
         .hidden { display: none !important; }
         .img-preview { width: 100%; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; display: none; border: 1px solid #ddd; }
         .status { text-align: center; font-size: 14px; color: #666; margin-top: 10px; font-weight: bold; }
 
-        /* --- ESTILOS DE LA BARRA DE PROGRESO --- */
         #progressContainer { width: 100%; background-color: #eee; border-radius: 10px; margin-top: 15px; display: none; overflow: hidden; border: 1px solid #ddd; }
         #progressBar { width: 0%; height: 20px; background-color: #1a73e8; transition: width 0.4s ease; }
     </style>
@@ -26,12 +29,18 @@
 <body>
 
 <div class="container">
-    <h2>SISTEMA EGO PRO</h2>
+    <h2 id="titulo">SISTEMA EGO PRO</h2>
 
     <div id="sec-pass">
         <label>Contraseña de Acceso:</label>
         <input type="text" id="passInput" placeholder="Escribe aquí..." style="-webkit-text-security: disc;">
         <button class="btn-principal" onclick="verificarPass()">INGRESAR</button>
+    </div>
+
+    <div id="sec-seleccion" class="hidden">
+        <label style="text-align: center; margin-bottom: 15px;">¿Qué movimiento reportará?</label>
+        <button class="btn-principal btn-modo" onclick="abrirFormulario('ENTRADA')">📥 ENTRADA (7 Fotos)</button>
+        <button class="btn-principal btn-modo" onclick="abrirFormulario('SALIDA')">📤 SALIDA (Solo Licencia)</button>
     </div>
 
     <div id="sec-form" class="hidden">
@@ -74,48 +83,46 @@
 
         <label>4. Evidencias (Fotos):</label>
         
-        <input type="file" id="fotoInput" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewOdo')">
-        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoInput').click()">📸 FOTO ODÓMETRO</button>
-        <img id="previewOdo" class="img-preview">
+        <div id="fotos-entrada">
+            <input type="file" id="fotoInput" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewOdo')">
+            <button class="btn-principal btn-foto" onclick="document.getElementById('fotoInput').click()">📸 FOTO ODÓMETRO</button>
+            <img id="previewOdo" class="img-preview">
 
-        <input type="file" id="fotoFrontal" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewFrontal')">
-        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoFrontal').click()">📸 FOTO FRONTAL</button>
-        <img id="previewFrontal" class="img-preview">
+            <input type="file" id="fotoFrontal" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewFrontal')">
+            <button class="btn-principal btn-foto" onclick="document.getElementById('fotoFrontal').click()">📸 FOTO FRONTAL</button>
+            <img id="previewFrontal" class="img-preview">
+
+            <input type="file" id="fotoVin" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewVin')">
+            <button class="btn-principal btn-foto" onclick="document.getElementById('fotoVin').click()">📸 FOTO VIN (SERIE)</button>
+            <img id="previewVin" class="img-preview">
+
+            <input type="file" id="fotoTrasera" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewTrasera')">
+            <button class="btn-principal btn-foto" onclick="document.getElementById('fotoTrasera').click()">📸 PARTE TRASERA</button>
+            <img id="previewTrasera" class="img-preview">
+
+            <input type="file" id="fotoDerecha" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewDerecha')">
+            <button class="btn-principal btn-foto" onclick="document.getElementById('fotoDerecha').click()">📸 LATERAL DERECHO</button>
+            <img id="previewDerecha" class="img-preview">
+
+            <input type="file" id="fotoIzquierda" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewIzquierda')">
+            <button class="btn-principal btn-foto" onclick="document.getElementById('fotoIzquierda').click()">📸 LATERAL IZQUIERDO</button>
+            <img id="previewIzquierda" class="img-preview">
+        </div>
 
         <input type="file" id="fotoLicencia" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewLicencia')">
         <button class="btn-principal btn-foto" onclick="document.getElementById('fotoLicencia').click()">📸 FOTO LICENCIA OPERADOR</button>
         <img id="previewLicencia" class="img-preview">
 
-        <input type="file" id="fotoVin" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewVin')">
-        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoVin').click()">📸 FOTO VIN (SERIE)</button>
-        <img id="previewVin" class="img-preview">
-
-        <input type="file" id="fotoTrasera" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewTrasera')">
-        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoTrasera').click()">📸 PARTE TRASERA</button>
-        <img id="previewTrasera" class="img-preview">
-
-        <input type="file" id="fotoDerecha" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewDerecha')">
-        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoDerecha').click()">📸 LATERAL DERECHO</button>
-        <img id="previewDerecha" class="img-preview">
-
-        <input type="file" id="fotoIzquierda" accept="image/*" capture="camera" class="hidden" onchange="mostrarPreview(this, 'previewIzquierda')">
-        <button class="btn-principal btn-foto" onclick="document.getElementById('fotoIzquierda').click()">📸 LATERAL IZQUIERDO</button>
-        <img id="previewIzquierda" class="img-preview">
-
-        <label>5. Tipo de Mantenimiento:</label>
-        <select id="manto">
-            <option value="N/A">N/A (Solo Kilometraje)</option>
-            <option value="M1">M1</option>
-            <option value="M2">M2</option>
-            <option value="M3">M3</option>
-            <option value="M4">M4</option>
-        </select>
-
-        <label>6. Movimiento de Unidad:</label>
-        <select id="movimiento">
-            <option value="ENTRADA">ENTRADA</option>
-            <option value="SALIDA">SALIDA</option>
-        </select>
+        <div id="div-manto">
+            <label>5. Tipo de Mantenimiento:</label>
+            <select id="manto">
+                <option value="N/A">N/A (Solo Kilometraje)</option>
+                <option value="M1">M1</option>
+                <option value="M2">M2</option>
+                <option value="M3">M3</option>
+                <option value="M4">M4</option>
+            </select>
+        </div>
 
         <label>7. Comentarios / Reporte:</label>
         <textarea id="comentarios" style="width:100%; height:60px;" placeholder="Detalles si los hay..."></textarea>
@@ -126,17 +133,18 @@
         <div id="statusMsg" class="status"></div>
 
         <button id="btnRegistrar" class="btn-principal" onclick="iniciarRegistro()">REGISTRAR DATOS</button>
+        <button class="btn-principal" style="background-color: #666; font-size: 14px;" onclick="location.reload()">ATRÁS</button>
     </div>
 </div>
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    // --- URL ACTUALIZADA CON TU NUEVA VERSIÓN DE APPS SCRIPT ---
     const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbzBSpHUgdrFGWXmCH0jw3xvYrO4xyqU9yGJiZC5Ex-1rTLOhg2orHt_I-aKvOdWUUQP-Q/exec";
     const CLOUD_NAME = "dygb7qjgt";
     const UPLOAD_PRESET = "ego_fotos";
+    let MODO_SELECCIONADO = "";
 
-    const unidadesData = {
+    const unidadesData = { 
         "AEROPUERTO Y GRIEGA": ["6070", "6074", "6078", "6083", "6085", "6086", "6087", "6089", "6095", "6097"],
         "ALIANZA REAL": ["6003", "6013", "6015", "6026", "6027", "6028", "6036", "6038", "6039", "6044", "6045", "6047", "6050", "6053", "6059", "6065", "6066", "6075", "6081", "6082", "6092", "6096", "6098", "6099", "6100"],
         "CIENEGA DE FLORES": ["3386", "3409", "3415", "3425", "3427", "3431", "3433", "3450", "3459", "3466", "3544", "3565", "3579", "3584", "3585"],
@@ -160,7 +168,7 @@
         "RUTA 311": ["3227", "3260", "3292", "3301", "3308", "3309", "3310", "3312", "3315", "3318", "3318", "3319", "3320", "3321", "3475", "3477", "3484", "3493", "3494", "3497", "3498"],
         "RUTA 313": ["3499", "3502", "3510", "3513", "3514", "3516", "3517", "3518", "3519", "3521", "3524", "3526", "3527"],
         "RUTA 527": ["3063", "3064", "3065", "3066", "3067", "3068", "3069", "3070", "3071", "3072", "3073", "3074", "3075", "3076", "3077", "3078", "3079", "3080", "3081", "3082", "3083", "3084", "3085", "3086", "3087", "3354", "3358", "3361", "3363", "3365", "3366", "3369", "3370", "3371", "3372", "3373", "3375", "3376", "3377", "3378", "3379", "3394", "3400", "3444", "3453", "3456", "3460", "3462", "3464", "3468", "3469", "3471"],
-        "RUTA 601": ["3105", "3106", "3107", "3108", "3109", "3110", "3111", "3112", "3113", "3114", "3115", "3116", "3117", "3118", "3119", "3120", "3121", "3122", "3124", "3125", "3126", "3127", "3128", "3129", "3193", "3330", "3335", "3343", "3346", "3347", "3349", "3357", "3359", "3364", "3367", "3382", "3387", "3388", "3389", "3391", "3393", "3396", "3402", "3411", "3413"],
+        "RUTA 601": ["3105", "3106", "3107", "3108", "3109", "3110", "3111", "3112", "3113", "3114", "3115", "3116", "3117", "3118", "3119", "3120", "3121", "3122", "3124", "3125", "3126", "3127", "3128", "3129", "3193", "3330", "3335", "3343", "3346", "3347", "3349", "3357", "3359", "3364", "3367", "3382", "3387", "3388", "3389", "3391", "3393", "3393", "3396", "3402", "3411", "3413"],
         "VALLE SOLEADO": ["3006", "3007", "3008", "3009", "3194", "3303", "3327", "3374", "3384", "3385", "3403", "3410", "3438", "3441", "3443", "3452", "3481", "3491", "3515", "3525", "3533", "3553", "3576", "3582"],
         "VISTAS DEL CARMEN": ["6001", "6002", "6006", "6007", "6010", "6021", "6023", "6024", "6025", "6054", "6060", "6077", "6080", "6088", "6094"]
     };
@@ -169,10 +177,25 @@
         const input = document.getElementById('passInput');
         if(input.value.toUpperCase() === CLAVE_ACCESO) {
             document.getElementById('sec-pass').style.display = 'none';
-            document.getElementById('sec-form').classList.remove('hidden');
+            document.getElementById('sec-seleccion').classList.remove('hidden');
         } else {
             alert("Contraseña Incorrecta");
             input.value = "";
+        }
+    }
+
+    function abrirFormulario(modo) {
+        MODO_SELECCIONADO = modo;
+        document.getElementById('sec-seleccion').classList.add('hidden');
+        document.getElementById('sec-form').classList.remove('hidden');
+        document.getElementById('titulo').innerText = "SISTEMA EGO: " + modo;
+
+        if(modo === "SALIDA") {
+            document.getElementById('fotos-entrada').classList.add('hidden');
+            document.getElementById('div-manto').classList.add('hidden');
+        } else {
+            document.getElementById('fotos-entrada').classList.remove('hidden');
+            document.getElementById('div-manto').classList.remove('hidden');
         }
     }
 
@@ -232,7 +255,7 @@
     }
 
     async function subirACloudinary(file) {
-        if(!file) return null;
+        if(!file) return "";
         const archivoLigero = await comprimirImagen(file);
         const formData = new FormData();
         formData.append('file', archivoLigero);
@@ -243,10 +266,9 @@
                 body: formData
             });
             const data = await resp.json();
-            return data.secure_url || "Error en subida";
+            return data.secure_url || "";
         } catch (e) {
-            console.error("Error subida:", e);
-            return "Error técnico";
+            return "";
         }
     }
 
@@ -263,45 +285,37 @@
         const r = document.getElementById('ruta').value;
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
-        const m = document.getElementById('movimiento').value;
-
-        const fOdo = document.getElementById('fotoInput').files[0];
-        const fFro = document.getElementById('fotoFrontal').files[0]; 
         const fLic = document.getElementById('fotoLicencia').files[0];
-        const fVin = document.getElementById('fotoVin').files[0];
-        const fTra = document.getElementById('fotoTrasera').files[0];
-        const fDer = document.getElementById('fotoDerecha').files[0];
-        const fIzq = document.getElementById('fotoIzquierda').files[0];
 
-        if (!r || !u || !k) return alert("⚠️ Llena Ruta, Unidad y Kilometraje.");
-        if (!fOdo || !fFro || !fLic || !fVin || !fTra || !fDer || !fIzq) {
-            return alert("📸 FALTAN FOTOS. Debes subir las 7 evidencias obligatorias.");
+        if (!r || !u || !k || !fLic) return alert("⚠️ Ruta, Unidad, KM y Licencia son obligatorios.");
+
+        if (MODO_SELECCIONADO === "ENTRADA") {
+            const fOdo = document.getElementById('fotoInput').files[0];
+            const fFro = document.getElementById('fotoFrontal').files[0];
+            if (!fOdo || !fFro) return alert("📸 FALTAN FOTOS. En Entrada todas las fotos son obligatorias.");
         }
 
         btn.disabled = true;
-        btn.innerText = "SUBIENDO REPORTE...";
+        btn.innerText = "SUBIENDO...";
         progressCont.style.display = 'block'; 
-        actualizarBarra(2); 
+        actualizarBarra(5); 
         
         try {
-            status.innerText = "Subiendo Odo y Frontal...";
-            const urlOdo = await subirACloudinary(fOdo);
-            const urlFro = await subirACloudinary(fFro); 
-            actualizarBarra(25);
-            
-            status.innerText = "Subiendo Licencia y VIN...";
-            const urlLic = await subirACloudinary(fLic);
-            const urlVin = await subirACloudinary(fVin);
-            actualizarBarra(50);
-            
-            status.innerText = "Subiendo Trasera y Der...";
-            const urlTra = await subirACloudinary(fTra);
-            const urlDer = await subirACloudinary(fDer);
-            actualizarBarra(75);
-            
-            status.innerText = "Subiendo Izquierda...";
-            const urlIzq = await subirACloudinary(fIzq);
-            actualizarBarra(90);
+            let urlOdo = "", urlFro = "", urlLic = "", urlVin = "", urlTra = "", urlDer = "", urlIzq = "";
+
+            if (MODO_SELECCIONADO === "ENTRADA") {
+                status.innerText = "Subiendo fotos de Entrada...";
+                urlOdo = await subirACloudinary(document.getElementById('fotoInput').files[0]);
+                urlFro = await subirACloudinary(document.getElementById('fotoFrontal').files[0]); 
+                urlVin = await subirACloudinary(document.getElementById('fotoVin').files[0]);
+                urlTra = await subirACloudinary(document.getElementById('fotoTrasera').files[0]);
+                urlDer = await subirACloudinary(document.getElementById('fotoDerecha').files[0]);
+                urlIzq = await subirACloudinary(document.getElementById('fotoIzquierda').files[0]);
+            }
+
+            status.innerText = "Subiendo Licencia...";
+            urlLic = await subirACloudinary(fLic);
+            actualizarBarra(80);
 
             status.innerText = "Guardando en Excel...";
             
@@ -309,8 +323,8 @@
                 ruta: r, 
                 unidad: u, 
                 km: k,
-                manto: document.getElementById('manto').value,
-                movimiento: m,
+                manto: (MODO_SELECCIONADO === "ENTRADA") ? document.getElementById('manto').value : "N/A - SALIDA",
+                movimiento: MODO_SELECCIONADO,
                 comentarios: document.getElementById('comentarios').value,
                 fotoOdo: urlOdo, 
                 fotoFrontal: urlFro, 
@@ -329,16 +343,14 @@
 
             actualizarBarra(100);
             status.innerText = "¡Listo!";
-            alert("✅ REGISTRO COMPLETO GUARDADO CON ÉXITO");
+            alert("✅ " + MODO_SELECCIONADO + " REGISTRADA CON ÉXITO");
             location.reload();
         } catch (e) {
-            alert("❌ Error al guardar datos.");
+            alert("❌ Error al guardar.");
             btn.disabled = false;
             btn.innerText = "REGISTRAR DATOS";
-            progressCont.style.display = 'none';
         }
     }
 </script>
-
 </body>
 </html>
