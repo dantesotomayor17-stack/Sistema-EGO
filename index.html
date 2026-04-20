@@ -7,7 +7,13 @@
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
         .container { max-width: 400px; width: 100%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
-        h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
+        
+        /* Estilo para el contenedor del logo y título */
+        .header-logo { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
+        .logo-img { max-width: 180px; height: auto; margin-bottom: 10px; }
+        
+        h2 { color: #1a73e8; text-align: center; margin: 0; text-transform: uppercase; border-bottom: none; }
+        
         label { display: block; margin: 15px 0 5px; font-weight: bold; color: #444; }
         select, input, textarea { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; }
         select:focus, input:focus { border-color: #1a73e8; }
@@ -29,7 +35,10 @@
 <body>
 
 <div class="container">
-    <h2 id="titulo">SISTEMA EGO PRO</h2>
+    <div class="header-logo">
+        <img src="https://res.cloudinary.com/dygb7qjgt/image/upload/v1776721918/WhatsApp_Image_2026-04-20_at_11.10.30_AM_bipr97.jpg" alt="Logo Empresa" class="logo-img">
+        <h2 id="titulo">SISTEMA EGO PRO</h2>
+    </div>
 
     <div id="sec-pass">
         <label>Contraseña de Acceso:</label>
@@ -139,7 +148,7 @@
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    // --- URL ACTUALIZADA SEGÚN TU ÚLTIMA VERSIÓN ---
+    // --- URL ACTUALIZADA CON TU NUEVA VERSIÓN ---
     const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbz8x37skCu-qTmkJU5FpeGxAX7GelRiCvKV-NUHUdVHDxMfRCrqGVkmB5opyL-ZoxASzQ/exec";
     const CLOUD_NAME = "dygb7qjgt";
     const UPLOAD_PRESET = "ego_fotos";
