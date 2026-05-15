@@ -299,6 +299,8 @@
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
         const fLic = document.getElementById('fotoLicencia').files[0];
+        const c = document.getElementById('comentarios').value; // NUEVO: Captura comentarios
+        const m = document.getElementById('manto').value;       // NUEVO: Captura mantenimiento
 
         if (!r || !u || !k || !fLic) return alert("⚠️ Ruta, Unidad, KM y Licencia son obligatorios.");
 
@@ -336,9 +338,9 @@
                 ruta: r, 
                 unidad: u, 
                 km: k,
-                manto: (MODO_SELECCIONADO === "ENTRADA") ? document.getElementById('manto').value : "N/A - SALIDA",
+                manto: (MODO_SELECCIONADO === "ENTRADA") ? m : "N/A - SALIDA",
                 movimiento: MODO_SELECCIONADO,
-                comentarios: document.getElementById('comentarios').value,
+                comentarios: c,
                 fotoOdo: urlOdo, 
                 fotoFrontal: urlFro, 
                 fotoLicencia: urlLic,
@@ -353,7 +355,6 @@
                 body: JSON.stringify(payload)
             });
 
-            // Intentamos capturar el número de fila si el Google Script ya fue actualizado
             let filaGuardada = "";
             let hojaGuardada = "";
             try {
@@ -370,22 +371,20 @@
             status.innerText = "¡Datos guardados con éxito!";
             
             if (MODO_SELECCIONADO === "ENTRADA") {
-                // Ocultamos los botones normales para obligar/sugerir ir a la hoja de servicio
                 btn.style.display = 'none';
                 btnAtras.style.display = 'none';
 
-                // Creamos y mostramos el botón naranja gigante (NUEVO LINK AQUI)
                 const btnHoja = document.createElement('button');
                 btnHoja.className = "btn-principal";
-                btnHoja.style.backgroundColor = "#ff9800"; // Color naranja
+                btnHoja.style.backgroundColor = "#ff9800"; 
                 btnHoja.innerText = "📋 GENERAR HOJA DE SERVICIO";
                 btnHoja.onclick = () => {
-                    const urlServicio = `https://descripcion-servicio.netlify.app/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}`;
+                    // ACTUALIZACIÓN DE URL: Ahora viajan los comentarios y el mantenimiento también
+                    const urlServicio = `https://descripcion-servicio.netlify.app/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}&comentarios=${encodeURIComponent(c)}&manto=${encodeURIComponent(m)}`;
                     window.location.href = urlServicio;
                 };
                 status.parentNode.insertBefore(btnHoja, status.nextSibling);
 
-                // Botón extra gris por si se equivocaron y solo quieren recargar
                 const btnVolver = document.createElement('button');
                 btnVolver.className = "btn-principal";
                 btnVolver.style.backgroundColor = "#666";
@@ -396,7 +395,6 @@
 
                 alert("✅ ENTRADA REGISTRADA. Haz clic en el botón NARANJA para generar la Hoja de Servicio.");
             } else {
-                // Si es SALIDA, solo recarga como siempre
                 alert("✅ SALIDA REGISTRADA CON ÉXITO");
                 location.reload();
             }
