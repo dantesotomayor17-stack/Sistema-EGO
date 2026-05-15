@@ -350,16 +350,17 @@
 
             const respuesta = await fetch(URL_WEBAPP, {
                 method: "POST",
-                // Nota: quitamos mode: "no-cors" para poder leer la respuesta del servidor (la fila)
                 body: JSON.stringify(payload)
             });
 
             // Intentamos capturar el número de fila si el Google Script ya fue actualizado
             let filaGuardada = "";
+            let hojaGuardada = "";
             try {
                 const resultado = await respuesta.json();
                 if(resultado && resultado.row) {
                     filaGuardada = resultado.row;
+                    hojaGuardada = resultado.hoja || "";
                 }
             } catch(e) {
                 console.log("Aviso: El script de Google aún no devuelve JSON o sigue en no-cors.");
@@ -373,13 +374,13 @@
                 btn.style.display = 'none';
                 btnAtras.style.display = 'none';
 
-                // Creamos y mostramos el botón naranja gigante
+                // Creamos y mostramos el botón naranja gigante (NUEVO LINK AQUI)
                 const btnHoja = document.createElement('button');
                 btnHoja.className = "btn-principal";
                 btnHoja.style.backgroundColor = "#ff9800"; // Color naranja
                 btnHoja.innerText = "📋 GENERAR HOJA DE SERVICIO";
                 btnHoja.onclick = () => {
-                    const urlServicio = `https://descripciondelservicioe-go.netlify.app/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}`;
+                    const urlServicio = `https://descripcion-servicio.netlify.app/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}`;
                     window.location.href = urlServicio;
                 };
                 status.parentNode.insertBefore(btnHoja, status.nextSibling);
