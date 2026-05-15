@@ -145,7 +145,7 @@
         <div id="statusMsg" class="status"></div>
 
         <button id="btnRegistrar" class="btn-principal" onclick="iniciarRegistro()">REGISTRAR DATOS</button>
-        <button class="btn-principal" style="background-color: #666; font-size: 14px;" onclick="location.reload()">ATRÁS</button>
+        <button id="btnAtras" class="btn-principal" style="background-color: #666; font-size: 14px;" onclick="location.reload()">ATRÁS</button>
     </div>
 </div>
 
@@ -292,6 +292,7 @@
     async function iniciarRegistro() {
         const status = document.getElementById('statusMsg');
         const btn = document.getElementById('btnRegistrar');
+        const btnAtras = document.getElementById('btnAtras');
         const progressCont = document.getElementById('progressContainer');
 
         const r = document.getElementById('ruta').value;
@@ -347,16 +348,58 @@
                 fotoIzquierda: urlIzq
             };
 
-            await fetch(URL_WEBAPP, {
+            const respuesta = await fetch(URL_WEBAPP, {
                 method: "POST",
-                mode: "no-cors",
+                // Nota: quitamos mode: "no-cors" para poder leer la respuesta del servidor (la fila)
                 body: JSON.stringify(payload)
             });
 
+            // Intentamos capturar el número de fila si el Google Script ya fue actualizado
+            let filaGuardada = "";
+            try {
+                const resultado = await respuesta.json();
+                if(resultado && resultado.row) {
+                    filaGuardada = resultado.row;
+                }
+            } catch(e) {
+                console.log("Aviso: El script de Google aún no devuelve JSON o sigue en no-cors.");
+            }
+
             actualizarBarra(100);
-            status.innerText = "¡Listo!";
-            alert("✅ " + MODO_SELECCIONADO + " REGISTRADA CON ÉXITO");
-            location.reload();
+            status.innerText = "¡Datos guardados con éxito!";
+            
+            if (MODO_SELECCIONADO === "ENTRADA") {
+                // Ocultamos los botones normales para obligar/sugerir ir a la hoja de servicio
+                btn.style.display = 'none';
+                btnAtras.style.display = 'none';
+
+                // Creamos y mostramos el botón naranja gigante
+                const btnHoja = document.createElement('button');
+                btnHoja.className = "btn-principal";
+                btnHoja.style.backgroundColor = "#ff9800"; // Color naranja
+                btnHoja.innerText = "📋 GENERAR HOJA DE SERVICIO";
+                btnHoja.onclick = () => {
+                    const urlServicio = `https://descripciondelservicioe-go.netlify.app/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}`;
+                    window.location.href = urlServicio;
+                };
+                status.parentNode.insertBefore(btnHoja, status.nextSibling);
+
+                // Botón extra gris por si se equivocaron y solo quieren recargar
+                const btnVolver = document.createElement('button');
+                btnVolver.className = "btn-principal";
+                btnVolver.style.backgroundColor = "#666";
+                btnVolver.style.fontSize = "14px";
+                btnVolver.innerText = "TERMINAR SIN HOJA";
+                btnVolver.onclick = () => location.reload();
+                status.parentNode.insertBefore(btnVolver, btnHoja.nextSibling);
+
+                alert("✅ ENTRADA REGISTRADA. Haz clic en el botón NARANJA para generar la Hoja de Servicio.");
+            } else {
+                // Si es SALIDA, solo recarga como siempre
+                alert("✅ SALIDA REGISTRADA CON ÉXITO");
+                location.reload();
+            }
+
         } catch (e) {
             alert("❌ Error al guardar.");
             btn.disabled = false;
