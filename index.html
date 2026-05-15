@@ -299,8 +299,8 @@
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
         const fLic = document.getElementById('fotoLicencia').files[0];
-        const c = document.getElementById('comentarios').value; // NUEVO: Captura comentarios
-        const m = document.getElementById('manto').value;       // NUEVO: Captura mantenimiento
+        const c = document.getElementById('comentarios').value; // Captura comentarios
+        const m = document.getElementById('manto').value;       // Captura mantenimiento
 
         if (!r || !u || !k || !fLic) return alert("⚠️ Ruta, Unidad, KM y Licencia son obligatorios.");
 
@@ -379,8 +379,8 @@
                 btnHoja.style.backgroundColor = "#ff9800"; 
                 btnHoja.innerText = "📋 GENERAR HOJA DE SERVICIO";
                 btnHoja.onclick = () => {
-                    // ACTUALIZACIÓN DE URL: Ahora viajan los comentarios y el mantenimiento también
-                    const urlServicio = `https://descripcion-servicio.netlify.app/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}&comentarios=${encodeURIComponent(c)}&manto=${encodeURIComponent(m)}`;
+                    // ACTUALIZACIÓN DE URL AL NUEVO ENLACE (descripcion-servicio-ego.netlify.app)
+                    const urlServicio = `https://descripcion-servicio-ego.netlify.app/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}&comentarios=${encodeURIComponent(c)}&manto=${encodeURIComponent(m)}`;
                     window.location.href = urlServicio;
                 };
                 status.parentNode.insertBefore(btnHoja, status.nextSibling);
