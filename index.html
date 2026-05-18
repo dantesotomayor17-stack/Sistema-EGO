@@ -151,9 +151,6 @@
 
 <script>
     const CLAVE_ACCESO = "EGO";
-    // -----------------------------------------------------------------------------------------------------------------
-    // NUEVA URL DEL APPS SCRIPT DE GOOGLE
-    // -----------------------------------------------------------------------------------------------------------------
     const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbwLMPcTq38PW5oHeUbHfc2PINYxUfWEpftzSh1Bc6CvWjU23-mBGHD3Jy8Kr3OsLtodHw/exec";
     
     const CLOUD_NAME = "dygb7qjgt";
@@ -303,8 +300,8 @@
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
         const fLic = document.getElementById('fotoLicencia').files[0];
-        const c = document.getElementById('comentarios').value; // Captura comentarios
-        const m = document.getElementById('manto').value;       // Captura mantenimiento
+        const c = document.getElementById('comentarios').value; 
+        const m = document.getElementById('manto').value;       
 
         if (!r || !u || !k || !fLic) return alert("⚠️ Ruta, Unidad, KM y Licencia son obligatorios.");
 
@@ -383,8 +380,8 @@
                 btnHoja.style.backgroundColor = "#ff9800"; 
                 btnHoja.innerText = "📋 GENERAR HOJA DE SERVICIO";
                 btnHoja.onclick = () => {
-                    // ACTUALIZACIÓN DE URL AL NUEVO ENLACE (descripcion-servicio-ego.netlify.app)
-                    const urlServicio = `https://descripcion-servicio-ego.netlify.app/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}&comentarios=${encodeURIComponent(c)}&manto=${encodeURIComponent(m)}`;
+                    // AQUÍ ESTÁ LA MODIFICACIÓN: AGREGANDO LAS FOTOS A LA URL DE NETLIFY
+                    const urlServicio = `https://descripcion-servicio-ego.netlify.app/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}&comentarios=${encodeURIComponent(c)}&manto=${encodeURIComponent(m)}&f_frontal=${encodeURIComponent(urlFro)}&f_trasera=${encodeURIComponent(urlTra)}&f_derecha=${encodeURIComponent(urlDer)}&f_izquierda=${encodeURIComponent(urlIzq)}`;
                     window.location.href = urlServicio;
                 };
                 status.parentNode.insertBefore(btnHoja, status.nextSibling);
