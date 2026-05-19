@@ -378,11 +378,11 @@
                 btnHoja.className = "btn-principal";
                 btnHoja.style.backgroundColor = "#ff9800"; 
                 btnHoja.innerText = "📋 GENERAR HOJA DE SERVICIO";
-                btnHoja.onclick = () => {
-                    // AQUÍ ESTÁ EL CAMBIO MAGISTRAL AL NUEVO SERVIDOR GITHUB
-                    const urlServicio = `https://dantesotomayor17-stack.github.io/generador-hojas-ego/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}&comentarios=${encodeURIComponent(c)}&manto=${encodeURIComponent(m)}&f_frontal=${encodeURIComponent(urlFro)}&f_trasera=${encodeURIComponent(urlTra)}&f_derecha=${encodeURIComponent(urlDer)}&f_izquierda=${encodeURIComponent(urlIzq)}`;
-                    window.location.href = urlServicio;
-                };
+              btnHoja.onclick = () => {
+    // AQUÍ ESTÁ LA RUTA CORRECTA
+    const urlServicio = `https://dantesotomayor17-stack.github.io/gestion-servicios-ego/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}&comentarios=${encodeURIComponent(c)}&manto=${encodeURIComponent(m)}&f_frontal=${encodeURIComponent(urlFro)}&f_trasera=${encodeURIComponent(urlTra)}&f_derecha=${encodeURIComponent(urlDer)}&f_izquierda=${encodeURIComponent(urlIzq)}`;
+    window.location.href = urlServicio;
+};
                 status.parentNode.insertBefore(btnHoja, status.nextSibling);
 
                 const btnVolver = document.createElement('button');
