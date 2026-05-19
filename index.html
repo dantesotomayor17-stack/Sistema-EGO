@@ -136,8 +136,11 @@
             </select>
         </div>
 
-        <label>7. Comentarios / Reporte:</label>
+      <label>7. Comentarios / Reporte (Mecánico):</label>
         <textarea id="comentarios" style="width:100%; height:60px;" placeholder="Detalles si los hay..."></textarea>
+
+        <label>8. Observaciones Estéticas (Recepción):</label>
+        <textarea id="obsEsteticas" style="width:100%; height:60px;" placeholder="Golpes, rayones, focos rotos..."></textarea>
 
         <div id="progressContainer">
             <div id="progressBar"></div>
@@ -298,9 +301,10 @@
         const r = document.getElementById('ruta').value;
         const u = document.getElementById('unidad').value;
         const k = document.getElementById('km').value;
-        const fLic = document.getElementById('fotoLicencia').files[0];
+       const fLic = document.getElementById('fotoLicencia').files[0];
         const c = document.getElementById('comentarios').value; 
-        const m = document.getElementById('manto').value;       
+        const obsEst = document.getElementById('obsEsteticas') ? document.getElementById('obsEsteticas').value : ""; 
+        const m = document.getElementById('manto').value;     
 
         if (!r || !u || !k || !fLic) return alert("⚠️ Ruta, Unidad, KM y Licencia son obligatorios.");
 
@@ -380,7 +384,7 @@
                 btnHoja.innerText = "📋 GENERAR HOJA DE SERVICIO";
               btnHoja.onclick = () => {
     // AQUÍ ESTÁ LA RUTA CORRECTA
-    const urlServicio = `https://dantesotomayor17-stack.github.io/gestion-servicios-ego/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}&comentarios=${encodeURIComponent(c)}&manto=${encodeURIComponent(m)}&f_frontal=${encodeURIComponent(urlFro)}&f_trasera=${encodeURIComponent(urlTra)}&f_derecha=${encodeURIComponent(urlDer)}&f_izquierda=${encodeURIComponent(urlIzq)}`;
+    const urlServicio = `https://dantesotomayor17-stack.github.io/gestion-servicios-ego/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}&comentarios=${encodeURIComponent(c)}&obsest=${encodeURIComponent(obsEst)}&manto=${encodeURIComponent(m)}&f_frontal=${encodeURIComponent(urlFro)}&f_trasera=${encodeURIComponent(urlTra)}&f_derecha=${encodeURIComponent(urlDer)}&f_izquierda=${encodeURIComponent(urlIzq)}`;
     window.location.href = urlServicio;
 };
                 status.parentNode.insertBefore(btnHoja, status.nextSibling);
