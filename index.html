@@ -386,8 +386,7 @@
                 btnHoja.style.backgroundColor = "#ff9800"; 
                 btnHoja.innerText = "📋 GENERAR HOJA DE SERVICIO";
                 btnHoja.onclick = () => {
-                    // ✅ AQUÍ se agregó &auto=1 al final de la URL
-                    const urlServicio = `https://dantesotomayor17-stack.github.io/gestion-servicios-ego/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}&comentarios=${encodeURIComponent(c)}&obsest=${encodeURIComponent(obsEst)}&manto=${encodeURIComponent(m)}&f_frontal=${encodeURIComponent(urlFro)}&f_trasera=${encodeURIComponent(urlTra)}&f_derecha=${encodeURIComponent(urlDer)}&f_izquierda=${encodeURIComponent(urlIzq)}&auto=1`;
+                    const urlServicio = `https://dantesotomayor17-stack.github.io/gestion-servicios-ego/?unidad=${u}&ruta=${encodeURIComponent(r)}&km=${k}&fila=${filaGuardada}&hoja=${encodeURIComponent(hojaGuardada)}&comentarios=${encodeURIComponent(c)}&obsest=${encodeURIComponent(obsEst)}&manto=${encodeURIComponent(m)}&f_frontal=${encodeURIComponent(urlFro)}&f_trasera=${encodeURIComponent(urlTra)}&f_derecha=${encodeURIComponent(urlDer)}&f_izquierda=${encodeURIComponent(urlIzq)}`;
                     window.location.href = urlServicio;
                 };
                 status.parentNode.insertBefore(btnHoja, status.nextSibling);
