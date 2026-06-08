@@ -8,10 +8,8 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
         .container { max-width: 400px; width: 100%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
         
-        /* Estilo para el contenedor del logo y título */
         .header-logo { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
         .logo-img { max-width: 180px; height: auto; margin-bottom: 10px; }
-        
         h2 { color: #1a73e8; text-align: center; margin: 0; text-transform: uppercase; border-bottom: none; }
         
         label { display: block; margin: 15px 0 5px; font-weight: bold; color: #444; }
@@ -50,6 +48,7 @@
         <label style="text-align: center; margin-bottom: 15px;">¿Qué movimiento reportará?</label>
         <button class="btn-principal btn-modo" onclick="abrirFormulario('ENTRADA')">📥 ENTRADA</button>
         <button class="btn-principal btn-modo" onclick="abrirFormulario('SALIDA')">📤 SALIDA</button>
+        <button class="btn-principal btn-modo" style="border-color: #ff9800; color: #ff9800; margin-top: 5px;" onclick="window.open('https://dantesotomayor17-stack.github.io/gestion-servicios-ego/', '_blank')">📋 PROGRAMAR HOJA DE SERVICIO</button>
     </div>
 
     <div id="sec-form" class="hidden">
@@ -242,6 +241,7 @@
         }
     }
 
+    // COMPRESIÓN AGRESIVA PARA EVITAR FOTOS DE MÁS DE 1MB
     async function comprimirImagen(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -253,19 +253,29 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-                    const MAX_WIDTH = 1200;
+                    
+                    // Límite de 800px para comprimir dramáticamente
+                    const MAX_WIDTH = 800; 
                     if (width > MAX_WIDTH) {
                         height *= MAX_WIDTH / width;
                         width = MAX_WIDTH;
                     }
+                    
                     canvas.width = width;
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
+                    
+                    // Fondo blanco por si la original es PNG con transparencia
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
                     ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Forzamos formato JPG al 50% de calidad y cambiamos el nombre
                     canvas.toBlob((blob) => {
-                        const newFile = new File([blob], file.name, { type: 'image/jpeg' });
+                        const newFile = new File([blob], "foto_comprimida.jpg", { type: 'image/jpeg' });
                         resolve(newFile);
-                    }, 'image/jpeg', 0.7);
+                    }, 'image/jpeg', 0.5); 
                 };
             };
         });
