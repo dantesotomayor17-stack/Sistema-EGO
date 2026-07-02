@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>E.G.O - Sistema de Flota Pro</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
@@ -156,6 +159,22 @@
 </div>
 
 <script>
+    // ===== SISTEMA ANTI-CACHÉ =====
+    // Cada vez que publiques cambios en GitHub, sube este número (+1).
+    // Así, el celular detecta que hay una versión nueva y se refresca solo.
+    const VERSION_APP = "1.1";
+
+    (function verificarVersion() {
+        const versionGuardada = localStorage.getItem("ego_version");
+        if (versionGuardada !== VERSION_APP) {
+            localStorage.setItem("ego_version", VERSION_APP);
+            // Si ya había una versión distinta guardada, forzamos recarga sin caché
+            if (versionGuardada !== null) {
+                location.reload(true);
+            }
+        }
+    })();
+
     const CLAVE_ACCESO = "EGO";
     const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbzSYGJNO-VSxYa8v0EGYYJVsJy5RPw1rkurLX-jDcFux4WTNBr6JHanINJbSeHkeAlRMw/exec";
     const CLOUD_NAME = "dygb7qjgt";
